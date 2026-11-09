@@ -1,0 +1,9 @@
+$meta
+  title = Ciénaga de Zapata · Aves Endémicas y Ciencia Ciudadana
+  shortTitle = Aves Zapata
+  description = App de avistamiento de aves en la Ciénaga de Zapata: registra con GPS en mapa, conteo por especie endémica y evidencia en foto, video y notas. Guías locales y turistas colaboran con la conservación.
+  tags = cuba, cienaga de zapata, aves, endemicas, birdwatching, ciencia ciudadana, conservacion, turismo de naturaleza
+  header
+    mode = minimal
+
+generateText = {import:ai-text-plugin}

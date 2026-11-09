@@ -1,0 +1,824 @@
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{
+  --verde-900:#0d2818; --verde-800:#143a24; --verde-700:#1b4d2e; --verde-600:#237a3d;
+  --verde-500:#2ea44f; --verde-100:#dcf0e2; --verde-50:#f0f8f2;
+  --tierra:#8a6b46; --arena:#f7f3ea; --tinta:#10231a; --gris:#5b6b60;
+  --rojo:#c0392b; --ambar:#b7791f; --azul:#2471a3;
+  --radio:14px; --sombra:0 6px 24px rgba(13,40,24,.12);
+}
+*{box-sizing:border-box}
+html{color-scheme:light}
+body{text-align:left;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,sans-serif;background:var(--arena);color:var(--tinta);line-height:1.5}
+.topbar{background:linear-gradient(135deg,var(--verde-900),var(--verde-700));color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:500}
+.topbar-row{max-width:1100px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.logo-mark{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:#ffffff22;display:flex;align-items:center;justify-content:center;border:1px solid #ffffff44}
+.topbar h1{font-size:17px;margin:0;line-height:1.2}
+.topbar p{margin:2px 0 0;font-size:12.5px;opacity:.9}
+.badge{display:inline-block;font-size:11px;font-weight:700;background:#ffffff26;border:1px solid #ffffff55;padding:2px 8px;border-radius:999px;margin-top:6px;letter-spacing:.2px}
+.tabs{max-width:1100px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:10px 16px 0;scrollbar-width:none}
+.tabBtn{flex:0 0 auto;border:1px solid #ffffff44;background:#ffffff1e;color:#fff;border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:650;cursor:pointer}
+.tabBtn.active{background:#fff;color:var(--verde-900)}
+main{max-width:1100px;margin:0 auto;padding:14px 14px 90px}
+.card{background:#fff;border-radius:var(--radio);box-shadow:var(--sombra);padding:16px;margin-bottom:14px;border:1px solid #e4e9e2}
+.card h2{margin:0 0 6px;font-size:19px}
+.card h3{margin:14px 0 8px;font-size:15px}
+.muted{color:var(--gris);font-size:13.5px}
+.grid2{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:800px){.grid2{grid-template-columns:1fr 1fr}.topbar h1{font-size:20px}}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+@media(min-width:800px){.kpis{grid-template-columns:repeat(4,1fr)}}
+.kpi{background:var(--verde-50);border:1px solid var(--verde-100);border-radius:12px;padding:12px}
+.kpi b{font-size:24px;display:block;line-height:1}
+.kpi span{font-size:12.5px;color:var(--gris)}
+.hero{display:grid;gap:12px}
+@media(min-width:860px){.hero{grid-template-columns:1.2fr .8fr}}
+.hero-visual{background:linear-gradient(160deg,#1b4d2e,#0d2818 60%,#0a1f14);color:#fff;border-radius:var(--radio);padding:18px;position:relative;overflow:hidden}
+.hero-visual svg{position:absolute;right:-20px;bottom:-20px;opacity:.18;width:220px;height:220px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 16px;font-weight:750;font-size:14px;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--verde-600);color:#fff}
+.btn-primary:hover{background:var(--verde-700)}
+.btn-ghost{background:#eef4ee;color:var(--verde-900);border:1px solid #d4e2d5}
+.btn-danger{background:#fbe9e7;color:var(--rojo);border:1px solid #f0c4bf}
+.btn-small{padding:7px 10px;font-size:12.5px;border-radius:8px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.steps{display:grid;gap:10px;margin-top:10px}
+@media(min-width:800px){.steps{grid-template-columns:repeat(3,1fr)}}
+.step{background:var(--verde-50);border:1px solid var(--verde-100);border-radius:12px;padding:12px;font-size:13.5px}
+.step b{display:block;margin-bottom:4px}
+label.lbl{display:block;font-size:12.5px;font-weight:750;margin:12px 0 5px;letter-spacing:.2px;text-transform:uppercase;color:var(--verde-800)}
+input[type=text],input[type=date],input[type=time],input[type=number],input[type=email],select,textarea{width:100%;border:1px solid #ccd6cc;border-radius:10px;padding:10px 11px;font-size:14.5px;background:#fff;color:var(--tinta)}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:700px){.row2{grid-template-columns:1fr 1fr}.row3{grid-template-columns:1fr 1fr 1fr}}
+.sp-row{display:grid;grid-template-columns:1fr 64px 36px 36px;gap:8px;align-items:end;margin-bottom:8px;background:var(--verde-50);border:1px solid var(--verde-100);padding:10px;border-radius:10px}
+.sp-row button{height:42px;border-radius:9px;border:1px solid #e0b4af;background:#fff;color:var(--rojo);font-weight:800;cursor:pointer}
+.mapbox{height:320px;border-radius:12px;overflow:hidden;border:1px solid #cdd8cc;background:#dfe8df;position:relative;z-index:1}
+.mapbox.tall{height:480px}
+.leaflet-container{font-family:inherit}
+.coordbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pill{background:var(--verde-900);color:#fff;font-size:12.5px;padding:5px 10px;border-radius:999px;font-variant-numeric:tabular-nums}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.thumbs img{width:100%;height:86px;object-fit:cover;border-radius:8px;border:1px solid #ddd;display:block}
+.thumb{position:relative}
+.thumb button{position:absolute;top:4px;right:4px;background:#000000aa;color:#fff;border:0;border-radius:7px;width:24px;height:24px;cursor:pointer}
+.species-grid{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:640px){.species-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.species-grid{grid-template-columns:1fr 1fr 1fr}}
+.sp-card{border:1px solid #e1e7e0;border-radius:12px;padding:12px;background:#fff;display:flex;flex-direction:column;gap:6px}
+.sp-card .sci{font-style:italic;color:var(--gris);font-size:13px}
+.tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;margin-right:6px}
+.tag.en{background:#fdecea;color:#9c2b1f;border:1px solid #f5c6c0}
+.tag.vu{background:#fef3e2;color:#8a5a00;border:1px solid #f0d9a8}
+.tag.nt{background:#e8f4fd;color:#1a5d86;border:1px solid #bcdff3}
+.tag.lc{background:#e9f5ec;color:#1b6b32;border:1px solid #bfe3c8}
+.tag.exc{background:#0d2818;color:#fff}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.filters input,.filters select{width:auto;flex:1;min-width:150px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid #e7ece7;text-align:left;vertical-align:top}
+.tbl th{font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--gris)}
+.tbl tr:hover td{background:#f6faf6}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--verde-900);color:#fff;padding:11px 16px;border-radius:12px;box-shadow:var(--sombra);z-index:2000;font-size:14px;max-width:92vw;display:none}
+.toast.show{display:block}
+.modal-back{position:fixed;inset:0;background:rgba(10,25,16,.55);display:none;align-items:center;justify-content:center;z-index:1500;padding:14px}
+.modal-back.open{display:flex}
+.modal{background:#fff;border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:18px}
+.modal img{max-width:100%;border-radius:10px}
+.guide{display:grid;grid-template-columns:64px 1fr;gap:12px;border:1px solid #e2e8e1;border-radius:12px;padding:12px;margin-bottom:10px}
+.avatar{width:64px;height:64px;border-radius:12px;background:var(--verde-700);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
+.guide small{color:var(--gris)}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;background:#ffffffee;backdrop-filter:blur(8px);border-top:1px solid #dfe6de;display:flex;z-index:600}
+.bottomnav button{flex:1;border:0;background:transparent;padding:10px 4px 12px;font-size:11px;font-weight:750;color:var(--gris);cursor:pointer}
+.bottomnav button.active{color:var(--verde-700)}
+.bottomnav span{display:block;font-size:17px;line-height:1}
+@media(min-width:800px){.bottomnav{display:none}}
+.notice{background:#fff8e1;border:1px solid #f0d9a8;border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0}
+.okbox{background:#e9f5ec;border:1px solid #bfe3c8;border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0}
+canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3;border-radius:10px}
+.foot{max-width:1100px;margin:0 auto;padding:0 14px 100px;color:var(--gris);font-size:12.5px}
+.hidden{display:none !important}
+.req::after{content:" *";color:var(--rojo)}
+.hint{font-size:12.5px;color:var(--gris);margin-top:4px}
+.video-preview{width:100%;border-radius:10px;margin-top:8px;background:#000}
+.sp-photo{width:100%;height:150px;object-fit:cover;border-radius:10px;background:#dfe8df;display:block}
+.sp-photo.big{height:230px}
+.photo-fallback{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12.5px;color:var(--gris);background:#eef2ec;border:1px dashed #b9c6b9;min-height:120px;padding:10px;border-radius:10px}
+.clave{background:#f2f7f1;border-left:3px solid var(--verde-500);padding:6px 9px;font-size:13px;border-radius:0 8px 8px 0;margin-top:6px}
+.conf{font-size:13px;color:#4c5a4e;margin-top:4px}
+.media-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sp-mini{width:52px;height:38px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:6px}
+.audiobox{margin-top:8px}
+.audiobox audio{width:100%;height:36px;display:block}
+.credit{font-size:12px;color:var(--gris);margin-top:2px}
+</style>
+
+<header class="topbar">
+  <div class="topbar-row">
+    <div class="logo-mark" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 8h8"/></svg>
+    </div>
+    <div>
+      <h1>Ciénaga de Zapata · Aves Endémicas</h1>
+      <p>Turistas y guías locales registrando ciencia para la conservación</p>
+      <span class="badge">23 de 27 endémicas de Cuba están aquí · Ciencia ciudadana</span>
+    </div>
+  </div>
+  <nav class="tabs" id="topTabs">
+    <button class="tabBtn active" data-tab="inicio">Inicio</button>
+    <button class="tabBtn" data-tab="registrar">Registrar</button>
+    <button class="tabBtn" data-tab="mapa">Mapa</button>
+    <button class="tabBtn" data-tab="especies">Especies</button>
+    <button class="tabBtn" data-tab="datos">Datos</button>
+    <button class="tabBtn" data-tab="guias">Guías</button>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-inicio">
+    <div class="hero">
+      <div class="card">
+        <h2>Convierte tu paseo en datos que protegen el humedal</h2>
+        <p class="muted">Marca en el mapa con GPS dónde viste cada ave, indica cuántos individuos contaste y adjunta foto, video o notas de campo. Los guías locales formados en los talleres validan los registros. Todo queda guardado en este dispositivo y se puede exportar para investigación.</p>
+        <div class="kpis">
+          <div class="kpi"><b id="kpiRegistrosEl">0</b><span>avistamientos</span></div>
+          <div class="kpi"><b id="kpiEspeciesEl">0</b><span>especies distintas</span></div>
+          <div class="kpi"><b id="kpiIndividuosEl">0</b><span>individuos contados</span></div>
+          <div class="kpi"><b id="kpiValidadosEl">0</b><span>validados por guías</span></div>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-primary" data-goto="registrar">Registrar avistamiento</button>
+          <button class="btn btn-ghost" data-goto="mapa">Ver mapa de avistamientos</button>
+        </div>
+        <div class="okbox" id="guiaAsignadoBoxEl">Sin guía asignado. En la pestaña Guías puedes elegir a tu guía local.</div>
+      </div>
+      <div class="hero-visual">
+        <h3 style="margin:0 0 6px">El humedal más importante del Caribe</h3>
+        <p style="margin:0 0 10px;font-size:13.5px;opacity:.92">Más de 200 especies de aves. Tres endémicas viven solo aquí: Fermina, Gallinuela de Santo Tomás y la subespecie del Cabrerito de la Ciénaga. El Zunzuncito, el ave más pequeña del mundo, también habita estos bosques.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <span class="pill">Sendero La Turba</span>
+          <span class="pill">Santo Tomás</span>
+          <span class="pill">Las Salinas</span>
+          <span class="pill">Bermejas</span>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.2"><path d="M20 7a4 4 0 0 0-7.28-2.3L2 20"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7"/></svg>
+        <div class="notice" style="margin-top:14px;background:#ffffff18;border-color:#ffffff44;color:#fff">Consejo de campo: registra cada grupo por separado con su conteo. Si no estás seguro de la especie, elige la más parecida y explícalo en notas. Una foto vale más que mil palabras.</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Cómo funciona para el turista colaborador</h2>
+      <div class="steps">
+        <div class="step"><b>1 · Observa con tu guía</b>Recorre los senderos con guías locales formados en identificación, ética de observación y uso de la app.</div>
+        <div class="step"><b>2 · Marca, cuenta y evidencia</b>Fija el punto GPS, anota la cantidad por especie y sube foto, video o texto de campo.</div>
+        <div class="step"><b>3 · Aporta a la conservación</b>Tu registro alimenta mapas de distribución, fenología y abundancia que usan los proyectos del Parque Nacional.</div>
+      </div>
+      <h3>Buenas prácticas</h3>
+      <p class="muted">Mantén distancia, no uses playback a alto volumen, no alimentes a las aves, permanece en el sendero y registra el esfuerzo (minutos caminados y distancia). Si ves una especie amenazada, prioriza no molestarla: una sola foto lejana basta.</p>
+    </div>
+  </section>
+
+  <section id="tab-registrar" hidden>
+    <div class="card">
+      <h2>Nuevo avistamiento</h2>
+      <p class="muted">Los campos con asterisco son obligatorios. Funciona en el móvil, incluso con poca cobertura: el GPS del teléfono no necesita internet.</p>
+      <label class="lbl req" for="obsNombreInput">Nombre del observador</label>
+      <input type="text" id="obsNombreInput" placeholder="Ej. María Fernández" autocomplete="name">
+      <div class="row row2">
+        <div>
+          <label class="lbl" for="obsRolInput">Rol</label>
+          <select id="obsRolInput">
+            <option value="turista">Turista colaborador</option>
+            <option value="guia">Guía local</option>
+            <option value="investigador">Investigador</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl" for="obsGuiaInput">Guía acompañante</label>
+          <select id="obsGuiaInput"><option value="">Sin guía / no recuerdo</option></select>
+        </div>
+      </div>
+      <div class="row row3">
+        <div><label class="lbl req" for="obsFechaInput">Fecha</label><input type="date" id="obsFechaInput"></div>
+        <div><label class="lbl" for="obsHoraInput">Hora</label><input type="time" id="obsHoraInput"></div>
+        <div><label class="lbl" for="obsDurInput">Esfuerzo en minutos</label><input type="number" id="obsDurInput" min="1" max="720" value="60"></div>
+      </div>
+      <div class="row row2">
+        <div>
+          <label class="lbl" for="obsSenderoInput">Sendero o localidad</label>
+          <select id="obsSenderoInput">
+            <option>La Turba</option><option>Santo Tomás - Soplillar</option><option>Las Salinas</option>
+            <option>Bermejas</option><option>Palpite - La Boca</option><option>Playa Girón - Cueva de los Peces</option>
+            <option>Hatiguanico</option><option>Otro punto de la Ciénaga</option>
+          </select>
+        </div>
+        <div>
+          <label class="lbl" for="obsHabitatInput">Hábitat</label>
+          <select id="obsHabitatInput">
+            <option>Bosque semideciduo</option><option>Manglar</option><option>Ciénaga herbácea</option>
+            <option>Salina costera</option><option>Palmar</option><option>Playa y costa</option><option>Área rural / lindero</option>
+          </select>
+        </div>
+      </div>
+      <h3>Especies y cantidades <span class="muted">(puedes añadir varias)</span></h3>
+      <p class="hint">¿Dudas identificando? <a href="#" id="gotoGuideLink">Abre la guía con fotos y cantos</a> o pulsa ? en cada fila para ver su ficha.</p>
+      <div id="spRowsCtn"></div>
+      <button class="btn btn-ghost btn-small" id="addSpBtn">+ Añadir otra especie</button>
+      <div class="okbox">Total de individuos: <b id="totalIndEl">0</b> · Especies distintas: <b id="totalSpEl">0</b></div>
+      <h3>Ubicación GPS en mapa</h3>
+      <p class="muted">Toca el mapa para mover el punto, o arrastra el marcador. En el campo usa el botón GPS.</p>
+      <div class="mapbox" id="formMapEl"></div>
+      <div class="coordbar">
+        <span class="pill" id="coordPillEl">Sin punto fijado</span>
+        <span class="pill" id="accPillEl">Precisión: --</span>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-primary btn-small" id="gpsBtn">Usar mi GPS</button>
+        <button class="btn btn-ghost btn-small" id="centerZapataBtn">Centrar en la Ciénaga</button>
+      </div>
+      <div class="row row2">
+        <div><label class="lbl" for="latInput">Latitud</label><input type="text" id="latInput" placeholder="22.32"></div>
+        <div><label class="lbl" for="lngInput">Longitud</label><input type="text" id="lngInput" placeholder="-81.62"></div>
+      </div>
+      <p class="hint">Si el mapa no carga por falta de internet, escribe las coordenadas manualmente desde otra app de GPS.</p>
+      <h3>Evidencia: fotos, video y notas</h3>
+      <label class="lbl" for="fotoInput">Fotos del avistamiento</label>
+      <input type="file" id="fotoInput" accept="image/*" multiple>
+      <div class="thumbs" id="fotoThumbsCtn"></div>
+      <label class="lbl" for="videoInput">Video corto (opcional)</label>
+      <input type="file" id="videoInput" accept="video/*">
+      <div id="videoPrevCtn"></div>
+      <p class="hint">Las fotos se comprimen automáticamente para que no llenen el teléfono. Los videos mayores a 8 MB se registran solo con nombre y tamaño.</p>
+      <label class="lbl" for="notasInput">Notas de campo (texto libre)</label>
+      <textarea id="notasInput" placeholder="Comportamiento, plumaje, canto, clima, con quién ibas, dudas de identificación..."></textarea>
+      <div class="toolbar" style="margin-top:14px">
+        <button class="btn btn-primary" id="saveBtn">Guardar avistamiento</button>
+        <button class="btn btn-ghost" id="clearFormBtn">Limpiar</button>
+      </div>
+      <div id="saveMsgEl"></div>
+    </div>
+  </section>
+
+  <section id="tab-mapa" hidden>
+    <div class="card">
+      <h2>Mapa de avistamientos</h2>
+      <p class="muted">Cada punto es un registro con GPS. Tócalo para ver especies, conteo, fotos y notas.</p>
+      <div class="filters">
+        <select id="mapSpFilterInput"><option value="">Todas las especies</option></select>
+        <select id="mapRolFilterInput"><option value="">Todos los roles</option><option value="turista">Turistas</option><option value="guia">Guías</option><option value="investigador">Investigadores</option></select>
+        <select id="mapValFilterInput"><option value="">Validados y pendientes</option><option value="si">Solo validados</option><option value="no">Solo pendientes</option></select>
+      </div>
+      <div class="mapbox tall" id="mainMapEl"></div>
+      <p class="hint" id="mapCountEl"></p>
+    </div>
+  </section>
+
+  <section id="tab-especies" hidden>
+    <div class="card">
+      <h2>Guía de las 23 endémicas de la Ciénaga</h2>
+      <p class="muted">De las 27 aves endémicas de Cuba, 23 se pueden ver aquí. Tres no viven en ningún otro lugar del mundo.</p>
+      <p class="hint">Cada ficha trae foto, clave visual, especie con la que se confunde y enlace para escuchar su canto. Las fotos y los cantos necesitan internet; el resto funciona sin conexión.</p>
+      <div class="filters">
+        <input type="text" id="spSearchInput" placeholder="Buscar por nombre...">
+        <select id="spStatusFilterInput"><option value="">Todos los estados</option><option value="CR">En peligro crítico</option><option value="EN">En peligro</option><option value="VU">Vulnerable</option><option value="NT">Casi amenazada</option><option value="LC">Preocupación menor</option><option value="exclusivo">Solo Zapata</option></select>
+      </div>
+      <div class="species-grid" id="speciesGridCtn"></div>
+    </div>
+  </section>
+
+  <section id="tab-datos" hidden>
+    <div class="card">
+      <h2>Panel científico</h2>
+      <p class="muted">Resumen automático de todo lo registrado en este dispositivo. Exporta para compartir con el Parque o con investigadores.</p>
+      <div class="kpis">
+        <div class="kpi"><b id="dRegEl">0</b><span>registros</span></div>
+        <div class="kpi"><b id="dIndEl">0</b><span>individuos</span></div>
+        <div class="kpi"><b id="dSpEl">0</b><span>especies</span></div>
+        <div class="kpi"><b id="dValEl">0</b><span>tasa validada</span></div>
+      </div>
+      <h3>Especies más registradas (individuos)</h3>
+      <canvas class="chart" id="chartSpEl" width="600" height="230"></canvas>
+      <h3>Registros</h3>
+      <div class="toolbar">
+        <button class="btn btn-ghost btn-small" id="exportCsvBtn">Exportar CSV</button>
+        <button class="btn btn-ghost btn-small" id="exportJsonBtn">Exportar JSON</button>
+        <button class="btn btn-ghost btn-small" id="importJsonBtn">Importar JSON</button>
+        <input type="file" id="importFileInput" accept="application/json" class="hidden">
+        <button class="btn btn-danger btn-small" id="wipeBtn">Borrar todo</button>
+      </div>
+      <div style="overflow-x:auto">
+      <table class="tbl"><thead><tr><th>Fecha</th><th>Observador</th><th>Especies y conteo</th><th>Total</th><th>Punto</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="dataTableBodyEl"></tbody></table>
+      </div>
+      <p class="hint">El CSV crea una fila por especie dentro de cada registro, con latitud y longitud, listo para análisis en hoja de cálculo o GIS.</p>
+    </div>
+  </section>
+
+  <section id="tab-guias" hidden>
+    <div class="card">
+      <h2>Guías locales</h2>
+      <p class="muted">Formados en los talleres del Parque: identificación de endémicas, ética de observación, GPS y validación de datos. Elige a tu guía y tus registros quedarán asociados a su acompañamiento.</p>
+      <div id="guidesCtn"></div>
+      <div class="notice">¿Eres guía y quieres aparecer aquí? Anota tu nombre en el registro como rol Guía local. La validación la haces desde la pestaña Datos, marcando registros como validados.</div>
+    </div>
+  </section>
+</main>
+
+<nav class="bottomnav" id="bottomNav">
+  <button data-tab="inicio" class="active"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span>Inicio</button>
+  <button data-tab="registrar"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>Registrar</button>
+  <button data-tab="mapa"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v16M15 6v16"/></svg></span>Mapa</button>
+  <button data-tab="especies"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 12 4l8 16"/><circle cx="12" cy="14" r="2"/></svg></span>Especies</button>
+  <button data-tab="datos"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Datos</button>
+</nav>
+
+<div class="foot">Hecho para la Ciénaga de Zapata · Los datos se guardan en tu dispositivo (offline-first). Exporta y comparte con el Parque Nacional para conservación. Las coordenadas se muestran con 5 decimales. Fotos: Wikimedia Commons mediante Wikipedia (crédito en cada ficha). Cantos: xeno-canto.</div>
+<div class="toast" id="toastEl"></div>
+<div class="modal-back" id="modalBackEl"><div class="modal" id="modalBoxEl"></div></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+"use strict";
+var LS_KEY = "zapata_aves_v1";
+var GUIDE_KEY = "zapata_guia_asignado";
+var ZAPATA_CENTER = [22.32, -81.62];
+
+window.ZAPATA_SPECIES = [
+ {id:"fermina",audio:"https://static.inaturalist.org/sounds/1301941.m4a?1738933629",audioBy:"pipingplover",audioObs:"https://www.inaturalist.org/observations/260893668",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Zapata_Wren.jpg/330px-Zapata_Wren.jpg",wiki:"https://en.wikipedia.org/wiki/Zapata_wren",xc:"https://xeno-canto.org/species/Ferminia-cerverai",clave:"Pardo listado, cola larga que mantiene erguida; corre entre las hierbas como un ratón.",confunde:"Cabrerito: más pequeño, de matorral seco, con gorra castaña bien marcada.",nombre:"Fermina",cientifico:"Ferminia cerverai",estado:"EN",exclusivo:true,habitat:"Herbazal de ciénaga",sendero:"Santo Tomás - Soplillar",prob:"Baja · solo con guía",desc:"Reyezuelo endémico que solo vive en la Ciénaga. Se escabulle entre hierbas altas y canta fuerte al amanecer.",canto:"Trino áspero y prolongado entre la hierba."},
+ {id:"gallinuela",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Cyanolimnas_cerverai_by_Allan_Brooks_cropped.jpg/330px-Cyanolimnas_cerverai_by_Allan_Brooks_cropped.jpg",wiki:"https://en.wikipedia.org/wiki/Zapata_rail",xc:"https://xeno-canto.org/species/Cyanolimnas-cerverai",clave:"Rálido oscuro de pico amarillo; casi nunca se deja ver, más fácil oírlo al atardecer. Ilustración de referencia.",confunde:"Gallareta de Pico Rojo: común, con escudete rojo en la frente y nada a la vista.",nombre:"Gallinuela de Santo Tomás",cientifico:"Cyanolimnas cerverai",estado:"CR",exclusivo:true,habitat:"Ciénaga herbácea inundada",sendero:"Santo Tomás - Soplillar",prob:"Muy baja · posible extinta",desc:"Rálido críptico, quizás el ave más rara del Caribe. Cualquier indicio (canto, pluma, foto) es un dato extraordinario.",canto:"Golpeteos y gruñidos bajos al atardecer."},
+ {id:"cabrerito",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Zapata_sparrow_%28Torreornis_inexpectata_varonai%29.JPG/330px-Zapata_sparrow_%28Torreornis_inexpectata_varonai%29.JPG",wiki:"https://en.wikipedia.org/wiki/Zapata_sparrow",xc:"https://xeno-canto.org/species/Torreornis-inexpectata",clave:"Gorrioncillo de gorra castaña, cara gris y bigotera amarilla.",confunde:"Tomeguín: más pequeño, sin gorra castaña, de pico rosado y fino.",nombre:"Cabrerito de la Ciénaga",cientifico:"Torreornis inexpectata inexpectata",estado:"EN",exclusivo:true,habitat:"Matorral costero y ciénaga",sendero:"Las Salinas",prob:"Media · amanecer",desc:"Subespecie nominal que solo vive en Zapata. Gorra castaña y canto fino en arbustos bajos junto a las salinas.",canto:"Zumbido agudo tipo insecto."},
+ {id:"zunzuncito",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Bee_hummingbird_%28Mellisuga_helenae%29_adult_male_in_flight-cropped.jpg/330px-Bee_hummingbird_%28Mellisuga_helenae%29_adult_male_in_flight-cropped.jpg",wiki:"https://en.wikipedia.org/wiki/Bee_hummingbird",xc:"https://xeno-canto.org/species/Mellisuga-helenae",clave:"Enano de 6 cm; el macho luce cabeza rojo fuego y cola ahorquillada.",confunde:"Zunzún: mucho más grande, verde esmeralda, sin rojo en la cabeza.",nombre:"Zunzuncito",cientifico:"Mellisuga helenae",estado:"NT",exclusivo:false,habitat:"Jardines y bosque",sendero:"Bermejas",prob:"Media · época de flores",desc:"El ave más pequeña del mundo (1.6 g). El macho tiene cabeza roja iridiscente y cola ahorquillada.",canto:"Chipeo muy fino, casi inaudible."},
+ {id:"cartacuba",audio:"https://static.inaturalist.org/sounds/38394.wav?1557539840",audioBy:"wayne_fidler",audioObs:"https://www.inaturalist.org/observations/24912544",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Cuban_tody_%28Todus_multicolor%29.JPG/330px-Cuban_tody_%28Todus_multicolor%29.JPG",wiki:"https://en.wikipedia.org/wiki/Cuban_tody",xc:"https://xeno-canto.org/species/Todus-multicolor",clave:"Cabezón verde de garganta roja, pico ancho y vientre rosado.",confunde:"Inconfundible: ninguna otra combina pico ancho rojo y vientre rosado.",nombre:"Cartacuba",cientifico:"Todus multicolor",estado:"LC",exclusivo:false,habitat:"Bosque semideciduo",sendero:"La Turba",prob:"Alta",desc:"Pequeña joya verde y rosada que caza insectos al acecho desde perchas bajas. El reclamo es inconfundible.",canto:"To-to-to grave y repetido."},
+ {id:"tocororo",audio:"https://static.inaturalist.org/sounds/1628365.mp3?1757248736",audioBy:"did_wild",audioObs:"https://www.inaturalist.org/observations/312173262",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Cuban_trogon_%28Priotelus_temnurus%29.JPG/330px-Cuban_trogon_%28Priotelus_temnurus%29.JPG",wiki:"https://en.wikipedia.org/wiki/Cuban_trogon",xc:"https://xeno-canto.org/species/Priotelus-temnurus",clave:"Dorso azul, pecho blanco y vientre rojo: los colores de la bandera.",confunde:"Inconfundible por su patrón tricolor y su reclamo hueco.",nombre:"Tocororo",cientifico:"Priotelus temnurus",estado:"LC",exclusivo:false,habitat:"Bosque",sendero:"La Turba",prob:"Alta",desc:"Ave nacional de Cuba con los colores de la bandera. Suele quedarse inmóvil largo rato en ramas medias.",canto:"To-co-ro-ro repetido y hueco."},
+ {id:"carpintero",audio:"https://static.inaturalist.org/sounds/27386.wav?1542253903",audioBy:"wayne_fidler",audioObs:"https://www.inaturalist.org/observations/18403795",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/5/53/Cuban_green_woodpecker_%28Xiphidiopicus_percussus_percussus%29_male.JPG/330px-Cuban_green_woodpecker_%28Xiphidiopicus_percussus_percussus%29_male.JPG",wiki:"https://en.wikipedia.org/wiki/Cuban_green_woodpecker",xc:"https://xeno-canto.org/species/Xiphidiopicus-percussus",clave:"Verde oliváceo con bigote rojo en el macho y moño amarillento.",confunde:"Carpintero Jabado: barrado blanco y negro, sin nada de verde.",nombre:"Carpintero Verde",cientifico:"Xiphidiopicus percussus",estado:"LC",exclusivo:false,habitat:"Bosque y palmares",sendero:"Palpite - La Boca",prob:"Alta",desc:"Carpintero cubano de bigote rojo y verde oliváceo. Busca larvas golpeando troncos secos.",canto:"Tamborileo corto y chillido descendente."},
+ {id:"siju",audio:"https://static.inaturalist.org/sounds/38393.wav?1557539835",audioBy:"wayne_fidler",audioObs:"https://www.inaturalist.org/observations/24912541",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Cuban_pygmy-owl_%28Glaucidium_siju_siju%29.JPG/330px-Cuban_pygmy-owl_%28Glaucidium_siju_siju%29.JPG",wiki:"https://en.wikipedia.org/wiki/Cuban_pygmy_owl",xc:"https://xeno-canto.org/species/Glaucidium-siju",clave:"Búho enano activo de día, de ojos amarillos y cejas blancas.",confunde:"Ninguna otra rapaz es tan pequeña ni tan diurna en la Ciénaga.",nombre:"Sijú",cientifico:"Glaucidium siju",estado:"LC",exclusivo:false,habitat:"Bosque y lindes",sendero:"Hatiguanico",prob:"Media · noche",desc:"Mini búho diurno de ojos amarillos. Responde al atardecer y se deja ver en postes y ramas expuestas.",canto:"Silbido hueco en serie al anochecer."},
+ {id:"catey",audio:"https://static.inaturalist.org/sounds/1746684.m4a?1768948161",audioBy:"seandjames",audioObs:"https://www.inaturalist.org/observations/335528857",img:"https://upload.wikimedia.org/wikipedia/commons/2/28/Cuban_Parakeet_%28Aratinga_euops%29_-in_tree-6-4c.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_parakeet",xc:"https://xeno-canto.org/species/Psittacara-euops",clave:"Perico verde de mejilla y frente rojas, siempre en bandadas ruidosas.",confunde:"Cotorra: más grande, de vuelo pausado y con frente blanca.",nombre:"Catey",cientifico:"Psittacara euops",estado:"VU",exclusivo:false,habitat:"Palmar y sabana",sendero:"Hatiguanico",prob:"Media · bandadas",desc:"Perico bullicioso que vuela en bandadas ruidosas al amanecer y al atardecer hacia los dormideros.",canto:"Chillidos estridentes en vuelo."},
+ {id:"cotorra",audio:"https://static.inaturalist.org/sounds/857622.m4a?1702064145",audioBy:"astrobirder",audioObs:"https://www.inaturalist.org/observations/193410478",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Amazona_leucocephala_-in_tree-4cp.jpg/330px-Amazona_leucocephala_-in_tree-4cp.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_amazon",xc:"https://xeno-canto.org/species/Amazona-leucocephala",clave:"Loro de frente blanca, mejilla rosada y hombro rojo.",confunde:"Catey: sin frente blanca, más pequeño y de vuelo rápido.",nombre:"Cotorra Cubana",cientifico:"Amazona leucocephala",estado:"NT",exclusivo:false,habitat:"Bosque y manglar",sendero:"Las Salinas",prob:"Media",desc:"Loro de frente blanca y mejillas rosadas. Parejas fieles que vuelan alto croando al amanecer.",canto:"Croar ronco en parejas."},
+ {id:"zunzun",audio:"https://static.inaturalist.org/sounds/38141.wav?1557275884",audioBy:"wayne_fidler",audioObs:"https://www.inaturalist.org/observations/24762630",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Cuban_emerald_%28Chlorostilbon_ricordii_ricordii%29_male_cr.jpg/330px-Cuban_emerald_%28Chlorostilbon_ricordii_ricordii%29_male_cr.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_emerald",xc:"https://xeno-canto.org/species/Riccordia-ricordii",clave:"Verde esmeralda brillante con cola ahorquillada azulosa.",confunde:"Zunzuncito: enano; el macho lleva la cabeza rojo fuego.",nombre:"Zunzún",cientifico:"Riccordia ricordii",estado:"LC",exclusivo:false,habitat:"Todo tipo de bosque",sendero:"La Turba",prob:"Muy alta",desc:"Colibrí común y confiado, verde esmeralda. Defiende flores y bebederos con vuelos zumbantes.",canto:"Zumbido de alas y chip seco."},
+ {id:"bobito-chico",audio:"https://static.inaturalist.org/sounds/161181.mp3?1611928065",audioBy:"jugbayjs",audioObs:"https://www.inaturalist.org/observations/68702035",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Cuban_pewee_%28Contopus_caribaeus_caribaeus%29.JPG/330px-Cuban_pewee_%28Contopus_caribaeus_caribaeus%29.JPG",wiki:"https://en.wikipedia.org/wiki/Cuban_pewee",xc:"https://xeno-canto.org/species/Contopus-caribaeus",clave:"Gris apagado con dos barras alares claras; caza y regresa a su percha.",confunde:"Bobito Grande: mayor, con cresta marcada y vientre amarillo.",nombre:"Bobito Chico",cientifico:"Contopus caribaeus",estado:"LC",exclusivo:false,habitat:"Bosque abierto",sendero:"Bermejas",prob:"Alta",desc:"Papamoscas gris que caza desde perchas expuestas y regresa al mismo punto una y otra vez.",canto:"Pliu corto y melancólico."},
+ {id:"bobito-grande",audio:"https://static.inaturalist.org/sounds/440790.m4a?1652707676",audioBy:"nature_is_awesome",audioObs:"https://www.inaturalist.org/observations/117303750",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Myiarchus_sagrae_-Ciego_de_Avila_Province%2C_Cuba-8.jpg/330px-Myiarchus_sagrae_-Ciego_de_Avila_Province%2C_Cuba-8.jpg",wiki:"https://en.wikipedia.org/wiki/La_Sagra%27s_flycatcher",xc:"https://xeno-canto.org/species/Myiarchus-sagrae",clave:"Copete erguido, garganta gris y vientre amarillo pálido.",confunde:"Bobito Chico: más gris, sin amarillo ni copete.",nombre:"Bobito Grande",cientifico:"Myiarchus sagrae",estado:"LC",exclusivo:false,habitat:"Bosque y matorral",sendero:"Bermejas",prob:"Alta",desc:"Más grande y crestudo, con vientre amarillento. Nidifica en huecos y es muy vocal en primavera.",canto:"Uiit agudo y repetido."},
+ {id:"juan-chivi",audio:"https://static.inaturalist.org/sounds/781852.wav?1690757227",audioBy:"stevecollins",audioObs:"https://www.inaturalist.org/observations/175831141",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Cuban_Vireo_-_Cuba_S4E0897_%2822991166932%29.jpg/330px-Cuban_Vireo_-_Cuba_S4E0897_%2822991166932%29.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_vireo",xc:"https://xeno-canto.org/species/Vireo-gundlachii",clave:"Ojos claros, antifaz oscuro y canto continuo e improvisado.",confunde:"Vireo de Ojo Rojo (migratorio): con ceja blanca bien marcada.",nombre:"Juan Chiví",cientifico:"Vireo gundlachii",estado:"LC",exclusivo:false,habitat:"Matorral y bosque",sendero:"Playa Girón",prob:"Alta",desc:"Vireo curioso de ojos claros que se mueve entre arbustos cantando sin parar incluso al mediodía.",canto:"Fraseo rápido y variado."},
+ {id:"ruisenor",audio:"https://static.inaturalist.org/sounds/28814.wav?1546445663",audioBy:"pd_pratt",audioObs:"https://www.inaturalist.org/observations/19377242",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Cuban_Solitaire_-_Cuba_S4E9751_%2817233178372%29.jpg/330px-Cuban_Solitaire_-_Cuba_S4E9751_%2817233178372%29.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_solitaire",xc:"https://xeno-canto.org/species/Myadestes-elisabeth",clave:"Pardo oliváceo de pecho jaspeado; su flauta descendente lo delata.",confunde:"Zorzales migratorios: no cantan en invierno y son más rojizos.",nombre:"Ruiseñor",cientifico:"Myadestes elisabeth",estado:"LC",exclusivo:false,habitat:"Bosque húmedo",sendero:"La Turba",prob:"Media · por canto",desc:"Solitaire de canto flautado espectacular, uno de los más bellos del Neotrópico. Tímido, se oye más que se ve.",canto:"Flauta descendente y etérea."},
+ {id:"cao",audio:"https://static.inaturalist.org/sounds/585851.m4a?1674000193",audioBy:"seandjames",audioObs:"https://www.inaturalist.org/observations/146792460",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/1/13/Cuban_Crow_-_Zapata%2C_Cuba_%28cropped%29.jpg/330px-Cuban_Crow_-_Zapata%2C_Cuba_%28cropped%29.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_crow",xc:"https://xeno-canto.org/species/Corvus-nasicus",clave:"Cuervo grande de cuello con plumas de borde claro y voz grave variada.",confunde:"Cao Pinalero: más pequeño, de palmares, con voz chillona.",nombre:"Cao Montero",cientifico:"Corvus nasicus",estado:"LC",exclusivo:false,habitat:"Bosque y costa",sendero:"Las Salinas",prob:"Media",desc:"Cuervo de cuello escamado y voz grave. Inteligente y social, suele verse en parejas o grupos.",canto:"Graznido ronco y variado."},
+ {id:"solibio",audio:"https://static.inaturalist.org/sounds/38298.wav?1557452865",audioBy:"wayne_fidler",audioObs:"https://www.inaturalist.org/observations/24867380",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/8/80/Cuban_Oriole_%28Icterus_melanopsis%29_Juvenile.jpg/330px-Cuban_Oriole_%28Icterus_melanopsis%29_Juvenile.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_oriole",xc:"https://xeno-canto.org/species/Icterus-melanopsis",clave:"Negro con hombros y rabadilla amarillos y pico largo. Foto: juvenil.",confunde:"Mayito: más pequeño, de hombro canela, en bandos grandes.",nombre:"Solibio",cientifico:"Icterus melanopsis",estado:"LC",exclusivo:false,habitat:"Palmar y jardines",sendero:"Palpite - La Boca",prob:"Alta",desc:"Oropéndola negra y amarilla que teje nidos colgantes en palmas. Canto melodioso al amanecer.",canto:"Silbidos dulces encadenados."},
+ {id:"mayito",audio:"https://static.inaturalist.org/sounds/41817.wav?1561151540",audioBy:"wayne_fidler",audioObs:"https://www.inaturalist.org/observations/27397684",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Agelaius_humeralis%2C_Holguin%2C_Cuba.jpg/330px-Agelaius_humeralis%2C_Holguin%2C_Cuba.jpg",wiki:"https://en.wikipedia.org/wiki/Tawny-shouldered_blackbird",xc:"https://xeno-canto.org/species/Agelaius-humeralis",clave:"Negro de hombro canela, en bandos ruidosos sobre zonas inundadas.",confunde:"Solibio: de pico más largo, en parejas, nunca en bandos grandes.",nombre:"Mayito",cientifico:"Agelaius humeralis",estado:"LC",exclusivo:false,habitat:"Arrozales y ciénaga",sendero:"Hatiguanico",prob:"Alta",desc:"Negro de hombros leonados, en bandadas junto a garzas y gallaretas en zonas inundadas.",canto:"Chak ruidoso en coro."},
+ {id:"negrito",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Cuban_bullfinch_%28Melopyrrha_nigra_nigra%29.JPG/330px-Cuban_bullfinch_%28Melopyrrha_nigra_nigra%29.JPG",wiki:"https://en.wikipedia.org/wiki/Cuban_bullfinch",xc:"https://xeno-canto.org/species/Melopyrrha-nigra",clave:"Negro lustroso de pico grueso; el macho canta desde arbustos altos.",confunde:"Tomeguín: pardo y pequeño, sin negro lustroso.",nombre:"Negrito",cientifico:"Melopyrrha nigra",estado:"LC",exclusivo:false,habitat:"Matorral",sendero:"Bermejas",prob:"Alta",desc:"Semillero negro lustroso con pico grueso. El macho canta desde arbustos expuestos.",canto:"Trino dulce y corto."},
+ {id:"tomeguin",audio:"https://static.inaturalist.org/sounds/38144.wav?1557275892",audioBy:"wayne_fidler",audioObs:"https://www.inaturalist.org/observations/24762632",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Tiaris_canorus_-Canberra_Walk_In_Aviary%2C_Australia-8a.jpg/330px-Tiaris_canorus_-Canberra_Walk_In_Aviary%2C_Australia-8a.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_grassquit",xc:"https://xeno-canto.org/species/Phonipara-canora",clave:"Diminuto pardo oliváceo de pico rosado y canto dulce.",confunde:"Cabrerito: con gorra castaña y bigotera amarilla bien marcadas.",nombre:"Tomeguín del Pinar",cientifico:"Phonipara canora",estado:"LC",exclusivo:false,habitat:"Herbazal y lindes",sendero:"Santo Tomás",prob:"Alta",desc:"Diminuto semillero cantor, muy apreciado. Bandaditas bajas entre hierbas con canto melodioso.",canto:"Gorjeo fino y alegre."},
+ {id:"chillina",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Yellow-headed_Warbler_%28Teretistris_fernandinae%29_cropped.jpg/330px-Yellow-headed_Warbler_%28Teretistris_fernandinae%29_cropped.jpg",wiki:"https://en.wikipedia.org/wiki/Yellow-headed_warbler",xc:"https://xeno-canto.org/species/Teretistris-fernandinae",clave:"Cabeza amarilla intensa y cuerpo gris; lidera bandadas mixtas.",confunde:"Bijiritas migratorias: ninguna combina cabeza amarilla con cuerpo gris.",nombre:"Chillina",cientifico:"Teretistris fernandinae",estado:"LC",exclusivo:false,habitat:"Bosque semideciduo",sendero:"La Turba",prob:"Muy alta",desc:"Reinita de cabeza amarilla que lidera bandadas mixtas. Curiosa, se acerca al observador quieto.",canto:"Chillidos nasales en grupo."},
+ {id:"cabrero",audio:"https://static.inaturalist.org/sounds/1359105.wav?1743635931",audioBy:"yan_tonz",audioObs:"https://www.inaturalist.org/observations/268299147",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Western_spindalis_%28Spindalis_zena_pretrei%29_male.JPG/330px-Western_spindalis_%28Spindalis_zena_pretrei%29_male.JPG",wiki:"https://en.wikipedia.org/wiki/Western_spindalis",xc:"https://xeno-canto.org/species/Spindalis-zena",clave:"Macho de capucha castaña, mejilla blanca y vientre naranja.",confunde:"Ningún ave del bosque combina capucha castaña y vientre naranja.",nombre:"Cabrero",cientifico:"Spindalis zena pretrei",estado:"LC",exclusivo:false,habitat:"Bosque y frutales",sendero:"Bermejas",prob:"Media",desc:"Tangara cubana de capucha castaña y vientre anaranjado. Come frutos en parejas.",canto:"Siseo fino y prolongado."},
+ {id:"gavilan",audio:"https://static.inaturalist.org/sounds/28992.mp3?1546917394",audioBy:"mjfeldman",audioObs:"https://www.inaturalist.org/observations/19500972",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Cuban_black_hawk_%28Buteogallus_gundlachii%29.jpg/330px-Cuban_black_hawk_%28Buteogallus_gundlachii%29.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_black_hawk",xc:"https://xeno-canto.org/species/Buteogallus-gundlachii",clave:"Rapaz oscura de manglar: alas anchas y cola con una banda blanca.",confunde:"Gavilán de Monte: de bosque interior, con cola de barras finas.",nombre:"Gavilán Batista",cientifico:"Buteogallus gundlachii",estado:"NT",exclusivo:false,habitat:"Manglar y costa",sendero:"Las Salinas",prob:"Baja · planeos",desc:"Rapaz de manglar, planea bajo sobre cangrejales. Dato valioso: anota hora y dirección de vuelo.",canto:"Silbido agudo en planeo."}
+];
+
+var GUIDES = [
+ {id:"g-levi",nombre:"Levi Fernández",zona:"Santo Tomás / Soplillar",idiomas:"ES · EN básico",esp:"Fermina y rálidos · canto",exp:"12 años · 1800 salidas",tel:"+53 5 000 0001"},
+ {id:"g-yanis",nombre:"Yanisleidy Cruz",zona:"Las Salinas / Bermejas",idiomas:"ES · EN · FR básico",esp:"Limícolas y rapaces · foto",exp:"9 años · talleres 2022-2025",tel:"+53 5 000 0002"},
+ {id:"g-odalys",nombre:"Odalys Padrón",zona:"La Turba / Palpite",idiomas:"ES · EN",esp:"Endémicas de bosque · familias",exp:"11 años · guía certificada",tel:"+53 5 000 0003"},
+ {id:"g-reynier",nombre:"Reynier Soto",zona:"Hatiguanico / noche",idiomas:"ES",esp:"Sijú y nocturnas · GPS",exp:"7 años · validación de datos",tel:"+53 5 000 0004"}
+];
+
+var formState = {lat:null,lng:null,acc:null,photos:[],video:null};
+var formMap=null,formMarker=null,mainMap=null,markerLayer=null,mapInited=false,formMapInited=false;
+
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function toast(msg){var t=$("toastEl");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("show");},2600);}
+function uid(){return "r"+Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36);}
+function todayStr(){var d=new Date();return d.toISOString().slice(0,10);}
+function nowTime(){var d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");}
+function spById(id){for(var i=0;i<window.ZAPATA_SPECIES.length;i++){if(window.ZAPATA_SPECIES[i].id===id)return window.ZAPATA_SPECIES[i];}return null;}
+function statusLabel(e){return {CR:"En peligro crítico",EN:"En peligro",VU:"Vulnerable",NT:"Casi amenazada",LC:"Preocupación menor"}[e]||e;}
+
+function loadRecords(){try{var raw=localStorage.getItem(LS_KEY);if(!raw)return null;var a=JSON.parse(raw);return Array.isArray(a)?a:null;}catch(e){return null;}}
+function saveRecords(a){localStorage.setItem(LS_KEY,JSON.stringify(a));}
+function getRecords(){var a=loadRecords();if(a)return a;var s=seedRecords();saveRecords(s);return s;}
+
+function seedRecords(){
+ var base=[
+  {obs:"Levi Fernández",rol:"guia",guia:"Levi Fernández",fecha:"2026-03-14",hora:"06:40",sendero:"Santo Tomás - Soplillar",habitat:"Ciénaga herbácea",dur:150,lat:22.4012,lng:-81.3981,acc:12,sp:[["fermina",2],["tomeguin",6]],notas:"Dos Ferminas cantando en dúo al amanecer. Viento suave. Sin playback.",val:true,valBy:"Levi Fernández",fotos:[]},
+  {obs:"Sofía Marín",rol:"turista",guia:"Yanisleidy Cruz",fecha:"2026-04-02",hora:"07:15",sendero:"Las Salinas",habitat:"Salina costera",dur:120,lat:22.1024,lng:-81.1588,acc:9,sp:[["cabrerito",4],["gavilan",1],["cao",2]],notas:"Gavilán Batista planeando bajo sobre el manglar hacia el este. Cabreritos en matorral junto al dique.",val:true,valBy:"Yanisleidy Cruz",fotos:[]},
+  {obs:"Tom Becker",rol:"turista",guia:"Odalys Padrón",fecha:"2026-04-20",hora:"08:05",sendero:"La Turba",habitat:"Bosque semideciduo",dur:90,lat:22.3318,lng:-81.5120,acc:15,sp:[["tocororo",2],["cartacuba",3],["chillina",8],["zunzun",4]],notas:"Bandada mixta liderada por Chillinas. Tocororo inmóvil 10 minutos. Fotos del Cartacuba.",val:true,valBy:"Odalys Padrón",fotos:[]},
+  {obs:"Reynier Soto",rol:"guia",guia:"Reynier Soto",fecha:"2026-05-06",hora:"19:20",sendero:"Hatiguanico",habitat:"Bosque y lindes",dur:60,lat:22.4521,lng:-81.2014,acc:18,sp:[["siju",2],["bobito-grande",1]],notas:"Dos Sijúes respondiendo al atardecer. Luna creciente.",val:false,valBy:"",fotos:[]},
+  {obs:"Ana Lucía",rol:"turista",guia:"Levi Fernández",fecha:"2026-10-26",hora:"06:55",sendero:"Bermejas",habitat:"Bosque semideciduo",dur:110,lat:22.0715,lng:-81.6822,acc:11,sp:[["zunzuncito",1],["ruisenor",1],["negrito",5]],notas:"Zunzuncito macho en flores rojas. Ruiseñor solo oído, no contarlo como foto.",val:false,valBy:"",fotos:[]},
+  {obs:"Marco Díaz",rol:"investigador",guia:"",fecha:"2026-10-30",hora:"07:30",sendero:"Palpite - La Boca",habitat:"Palmar",dur:80,lat:22.2814,lng:-81.7210,acc:14,sp:[["solibio",3],["carpintero",2],["catey",12]],notas:"Bando de Cateyes hacia dormidero. Solibios en palma real.",val:false,valBy:"",fotos:[]},
+  {obs:"Elena Ruiz",rol:"turista",guia:"Yanisleidy Cruz",fecha:"2026-11-04",hora:"09:10",sendero:"Las Salinas",habitat:"Manglar",dur:70,lat:22.1152,lng:-81.1720,acc:10,sp:[["cotorra",4],["mayito",20],["juan-chivi",2]],notas:"Cotorras en parejas altas. Mayitos en arrozal inundado.",val:false,valBy:"",fotos:[]}
+ ];
+ return base.map(function(o,i){
+  var tot=o.sp.reduce(function(s,x){return s+x[1];},0);
+  return {id:uid()+i,observer:o.obs,role:o.rol,guide:o.guia,date:o.fecha,time:o.hora,trail:o.sendero,habitat:o.habitat,
+   duration:o.dur,distance:"",weather:"",species:o.sp.map(function(x){return {id:x[0],count:x[1]};}),
+   total:tot,lat:o.lat,lng:o.lng,acc:o.acc,notes:o.notas,photos:[],video:null,validated:o.val,validatedBy:o.valBy,createdAt:Date.now()- (base.length-i)*86400000};
+ });
+}
+
+function showTab(name){
+ var secs=["inicio","registrar","mapa","especies","datos","guias"];
+ secs.forEach(function(s){$("tab-"+s).hidden=(s!==name);});
+ document.querySelectorAll("#topTabs .tabBtn").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-tab")===name);});
+ document.querySelectorAll("#bottomNav button").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-tab")===name);});
+ window.scrollTo({top:0,behavior:"smooth"});
+ if(name==="mapa")setTimeout(initMainMap,60);
+ if(name==="registrar")setTimeout(initFormMap,60);
+ if(name==="datos")renderData();
+ if(name==="inicio")renderHome();
+}
+document.querySelectorAll("[data-tab]").forEach(function(b){b.addEventListener("click",function(){showTab(b.getAttribute("data-tab"));});});
+document.querySelectorAll("[data-goto]").forEach(function(b){b.addEventListener("click",function(){showTab(b.getAttribute("data-goto"));});});
+
+/* ---------- formulario ---------- */
+function spOptionsHTML(sel){
+ return window.ZAPATA_SPECIES.map(function(s){
+  return '<option value="'+s.id+'"'+(s.id===sel?" selected":"")+'>'+esc(s.nombre)+" — "+esc(s.cientifico)+"</option>";
+ }).join("");
+}
+function addSpeciesRow(selId,count){
+ var ctn=$("spRowsCtn");
+ var div=document.createElement("div");div.className="sp-row";
+ div.innerHTML='<div><label class="lbl" style="margin-top:0">Especie</label><select class="spSel">'+spOptionsHTML(selId||"cartacuba")+'</select></div>'+
+  '<div><label class="lbl" style="margin-top:0">Cantidad</label><input type="number" class="spCount" min="1" max="500" value="'+(count||1)+'"></div>'+
+  '<div><button type="button" title="Ver foto y canto" class="fichaRowBtn">?</button></div>'+
+  '<div><button type="button" title="Quitar">×</button></div>';
+  div.querySelector(".fichaRowBtn").addEventListener("click",function(){openSpecies(div.querySelector(".spSel").value);});
+ div.querySelector("button").addEventListener("click",function(){if($("spRowsCtn").children.length>1){div.remove();updateTotals();}else{toast("Debe haber al menos una especie");}});
+ div.querySelector(".spCount").addEventListener("input",updateTotals);
+ div.querySelector(".spSel").addEventListener("change",updateTotals);
+ ctn.appendChild(div);updateTotals();
+}
+function updateTotals(){
+ var rows=$("spRowsCtn").children,tot=0,seen={};
+ for(var i=0;i<rows.length;i++){var c=parseInt(rows[i].querySelector(".spCount").value,10)||0;tot+=c;seen[rows[i].querySelector(".spSel").value]=1;}
+ $("totalIndEl").textContent=tot;$("totalSpEl").textContent=Object.keys(seen).length;
+}
+function setFormPoint(lat,lng,acc){
+ formState.lat=+lat;formState.lng=+lng;if(acc!=null)formState.acc=Math.round(acc);
+ $("latInput").value=(+lat).toFixed(5);$("lngInput").value=(+lng).toFixed(5);
+ $("coordPillEl").textContent="Punto: "+(+lat).toFixed(5)+", "+(+lng).toFixed(5);
+ $("accPillEl").textContent="Precisión: "+(formState.acc!=null?("±"+formState.acc+" m"):"--");
+ if(formMarker&&formMap){formMarker.setLatLng([lat,lng]);}
+}
+
+function initFormMap(){
+ if(formMapInited){if(formMap)formMap.invalidateSize();return;}
+ if(typeof L==="undefined"){$("formMapEl").innerHTML='<p class="muted" style="padding:16px">Mapa sin conexión: escribe latitud y longitud manualmente.</p>';return;}
+ formMapInited=true;
+ formMap=L.map("formMapEl").setView(ZAPATA_CENTER,10);
+ var formBase={ "Calles (Esri)": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"© Esri, OpenStreetMap"}),
+  "Satélite (Esri)": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"© Esri"}),
+  "Humanitario (OSM)": L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",{maxZoom:19,subdomains:"abc",attribution:"© OpenStreetMap · HOT"})};
+ formBase["Calles (Esri)"].addTo(formMap); L.control.layers(formBase).addTo(formMap);
+ formMarker=L.marker(ZAPATA_CENTER,{draggable:true}).addTo(formMap);
+ formMarker.on("dragend",function(){var p=formMarker.getLatLng();setFormPoint(p.lat,p.lng,formState.acc);});
+ formMap.on("click",function(e){setFormPoint(e.latlng.lat,e.latlng.lng,formState.acc);});
+ setTimeout(function(){formMap.invalidateSize();},300);
+ var recs=getRecords();
+ if(recs.length&&formState.lat==null){var last=recs[recs.length-1];formMap.setView([last.lat,last.lng],11);formMarker.setLatLng([last.lat,last.lng]);setFormPoint(last.lat,last.lng,last.acc);}
+}
+
+function compressImage(file){
+ return new Promise(function(res,rej){
+  var img=new Image();
+  var url=URL.createObjectURL(file);
+  img.onload=function(){
+   URL.revokeObjectURL(url);
+   var max=1280,w=img.width,h=img.height;
+   var sc=Math.min(1,max/Math.max(w,h));
+   var cw=Math.round(w*sc),ch=Math.round(h*sc);
+   var cv=document.createElement("canvas");cv.width=cw;cv.height=ch;
+   cv.getContext("2d").drawImage(img,0,0,cw,ch);
+   res(cv.toDataURL("image/jpeg",0.8));
+  };
+  img.onerror=rej;img.src=url;
+ });
+}
+
+function renderPhotoThumbs(){
+ var c=$("fotoThumbsCtn");c.innerHTML="";
+ formState.photos.forEach(function(p,i){
+  var d=document.createElement("div");d.className="thumb";
+  var im=document.createElement("img");im.src=p;im.alt="Foto de avistamiento "+(i+1);
+  var b=document.createElement("button");b.textContent="×";b.title="Quitar foto";
+  b.addEventListener("click",function(){formState.photos.splice(i,1);renderPhotoThumbs();});
+  d.appendChild(im);d.appendChild(b);c.appendChild(d);
+ });
+}
+
+function collectForm(){
+ var rows=$("spRowsCtn").children,splist=[];
+ for(var i=0;i<rows.length;i++){
+  var id=rows[i].querySelector(".spSel").value;
+  var n=parseInt(rows[i].querySelector(".spCount").value,10);
+  if(!id||!(n>0))return {error:"Revisa especies y cantidades: cada cantidad debe ser 1 o más."};
+  splist.push({id:id,count:n});
+ }
+ var name=$("obsNombreInput").value.trim();
+ var fecha=$("obsFechaInput").value;
+ var lat=parseFloat($("latInput").value),lng=parseFloat($("lngInput").value);
+ if(!name)return {error:"Escribe el nombre del observador."};
+ if(!fecha)return {error:"Elige la fecha del avistamiento."};
+ if(!splist.length)return {error:"Añade al menos una especie."};
+ if(!isFinite(lat)||!isFinite(lng))return {error:"Fija el punto GPS tocando el mapa o usa el botón GPS."};
+ if(lat<21.5||lat>23.2||lng<-82.5||lng>-80.3)return {error:"Las coordenadas parecen fuera de la Ciénaga de Zapata. Revísalas."};
+ var tot=splist.reduce(function(s,x){return s+x.count;},0);
+ return {rec:{id:uid(),observer:name,role:$("obsRolInput").value,guide:$("obsGuiaInput").value,
+  date:fecha,time:$("obsHoraInput").value||"08:00",trail:$("obsSenderoInput").value,habitat:$("obsHabitatInput").value,
+  duration:parseInt($("obsDurInput").value,10)||60,distance:"",weather:"",
+  species:splist,total:tot,lat:+lat.toFixed(5),lng:+lng.toFixed(5),acc:formState.acc,
+  notes:$("notasInput").value.trim(),photos:formState.photos.slice(0,6),video:formState.video,
+  validated:false,validatedBy:"",createdAt:Date.now()}};
+}
+
+/* ---------- mapa principal ---------- */
+function initMainMap(){
+ buildMapFilters();
+ if(typeof L==="undefined"){$("mainMapEl").innerHTML='<p class="muted" style="padding:16px">Sin conexión para teselas. Los registros siguen disponibles en Datos.</p>';return;}
+ if(!mainMap){
+  mainMap=L.map("mainMapEl").setView(ZAPATA_CENTER,10);
+  var base={"Calles (Esri)":L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"© Esri, OpenStreetMap"}),
+   "Satélite (Esri)":L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:"© Esri"}),
+   "Humanitario (OSM)":L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",{maxZoom:19,subdomains:"abc",attribution:"© OpenStreetMap · HOT"})};
+  base["Calles (Esri)"].addTo(mainMap); L.control.layers(base).addTo(mainMap);
+  markerLayer=L.layerGroup().addTo(mainMap);
+ }
+ setTimeout(function(){mainMap.invalidateSize();renderMainMap();},120);
+}
+function buildMapFilters(){
+ var sel=$("mapSpFilterInput");
+ if(sel.options.length<=1){
+  window.ZAPATA_SPECIES.forEach(function(s){var o=document.createElement("option");o.value=s.id;o.textContent=s.nombre;sel.appendChild(o);});
+ }
+}
+function filteredForMap(){
+ var recs=getRecords();
+ var sp=$("mapSpFilterInput").value,rol=$("mapRolFilterInput").value,val=$("mapValFilterInput").value;
+ return recs.filter(function(r){
+  if(sp&&!r.species.some(function(x){return x.id===sp;}))return false;
+  if(rol&&r.role!==rol)return false;
+  if(val==="si"&&!r.validated)return false;
+  if(val==="no"&&r.validated)return false;
+  return true;
+ });
+}
+function renderMainMap(){
+ if(!mainMap||typeof L==="undefined")return;
+ markerLayer.clearLayers();
+ var recs=filteredForMap();
+ $("mapCountEl").textContent=recs.length+" registros en vista · "+recs.reduce(function(s,r){return s+r.total;},0)+" individuos";
+ var bounds=[];
+ recs.forEach(function(r){
+  var col=r.validated?"#237a3d":"#b7791f";
+  var m=L.circleMarker([r.lat,r.lng],{radius:7+Math.min(8,Math.sqrt(r.total)),color:col,weight:2,fillColor:col,fillOpacity:.55});
+  var spList=r.species.map(function(x){var s=spById(x.id);return (s?s.nombre:x.id)+" × "+x.count;}).join("<br>");
+  var imgs=(r.photos||[]).slice(0,2).map(function(p){return '<img src="'+p+'" style="width:100%;height:90px;object-fit:cover;margin-top:6px">';}).join("");
+  m.bindPopup("<b>"+esc(r.observer)+"</b> · "+esc(r.date)+" "+esc(r.time||"")+"<br>"+spList+"<br><span style='color:#5b6b60'>"+esc(r.trail)+" · "+(r.validated?"Validado por "+esc(r.validatedBy||"guía"):"Pendiente de validación")+"</span>"+imgs+(r.notes?"<br><i>"+esc(r.notes).slice(0,140)+"</i>":""));
+  m.addTo(markerLayer);bounds.push([r.lat,r.lng]);
+ });
+ if(bounds.length)mainMap.fitBounds(bounds,{padding:[30,30]});
+}
+
+/* ---------- especies ---------- */
+function renderSpeciesGrid(){
+ var q=$("spSearchInput").value.trim().toLowerCase();
+ var f=$("spStatusFilterInput").value;
+ var recs=getRecords();
+ var counts={};
+ recs.forEach(function(r){r.species.forEach(function(x){counts[x.id]=(counts[x.id]||0)+x.count;});});
+ var ctn=$("speciesGridCtn");ctn.innerHTML="";
+ window.ZAPATA_SPECIES.filter(function(s){
+  if(f==="exclusivo"&&!s.exclusivo)return false;
+  if(f&&f!=="exclusivo"&&s.estado!==f)return false;
+  if(q&&(s.nombre+" "+s.cientifico).toLowerCase().indexOf(q)<0)return false;
+  return true;
+ }).forEach(function(s){
+  var d=document.createElement("div");d.className="sp-card";
+  d.innerHTML='<img class="sp-photo" src="'+s.img+'" alt="Foto de '+esc(s.nombre)+'" loading="lazy" onerror="spImgErr(this)">'+
+   '<div><b>'+esc(s.nombre)+'</b> <span class="sci">'+esc(s.cientifico)+'</span></div>'+
+   '<div><span class="tag '+s.estado.toLowerCase()+'">'+s.estado+" · "+esc(statusLabel(s.estado))+'</span>'+(s.exclusivo?'<span class="tag exc">Solo Zapata</span>':"")+'</div>'+
+   '<div class="muted">'+esc(s.desc)+'</div>'+
+   '<div class="clave"><b>Clave visual:</b> '+esc(s.clave)+'</div>'+
+   '<div class="conf"><b>Se confunde con:</b> '+esc(s.confunde)+'</div>'+
+   '<div class="muted">Canto: '+esc(s.canto)+'<br>Hábitat: '+esc(s.habitat)+' · Mejor punto: '+esc(s.sendero)+'</div>'+
+   '<div><b>'+(counts[s.id]||0)+'</b> <span class="muted">individuos registrados en este dispositivo</span></div>'+
+   audioHTML(s)+'<div class="media-btns"><a class="btn btn-ghost btn-small" href="'+s.xc+'" target="_blank" rel="noopener">Escuchar canto</a>'+
+   '<button class="btn btn-ghost btn-small fichaBtn" type="button">Ficha completa</button>'+
+   '<button class="btn btn-ghost btn-small regBtn" type="button">Registrar esta especie</button></div>';
+  d.querySelector(".fichaBtn").addEventListener("click",function(){openSpecies(s.id);});
+  d.querySelector(".regBtn").addEventListener("click",function(){showTab("registrar");setTimeout(function(){$("spRowsCtn").innerHTML="";addSpeciesRow(s.id,1);document.getElementById("tab-registrar").scrollIntoView();},80);});
+  d.querySelector(".sp-photo").addEventListener("click",function(){openSpecies(s.id);});
+  d.querySelector(".sp-photo").style.cursor="pointer";ctn.appendChild(d);
+ });
+}
+
+window.spImgErr=function(el){var d=document.createElement("div");d.className="sp-photo photo-fallback";d.textContent="Foto no disponible sin conexión · abre la ficha en Wikipedia";el.replaceWith(d);};
+function audioHTML(s){if(s.audio)return '<div class="audiobox"><audio controls preload="none" src="'+s.audio+'"></audio><div class="credit">Canto: '+esc(s.audioBy)+' vía <a href="'+s.audioObs+'" target="_blank" rel="noopener">iNaturalist</a></div></div>';return '<div class="credit">Sin grabación guardada · abre la ficha para buscar en línea o escucha en xeno-canto</div>';}
+async function liveAudioSearch(s,resEl,btnEl){resEl.textContent="Buscando grabaciones...";btnEl.disabled=true;try{var r=await fetch("https://api.inaturalist.org/v1/observations?taxon_name="+encodeURIComponent(s.cientifico)+"&sounds=true&per_page=10&order=desc&order_by=votes");if(!r.ok)throw 0;var j=await r.json();var items=[];(j.results||[]).forEach(function(ob){(ob.sounds||[]).forEach(function(sd){items.push({u:sd.file_url,by:ob.user?ob.user.login:"?",g:ob.quality_grade,id:ob.id});});});if(!items.length){resEl.textContent="Aún no hay grabaciones aquí. Prueba en xeno-canto.";btnEl.disabled=false;return;}resEl.innerHTML="";items.slice(0,3).forEach(function(it){var w=document.createElement("div");w.className="audiobox";var a=document.createElement("audio");a.controls=true;a.preload="none";a.src=it.u;var c=document.createElement("div");c.className="credit";c.innerHTML=esc(it.by)+" · "+(it.g==="research"?"grado investigación":"grado "+esc(it.g||"?"))+' · <a href="https://www.inaturalist.org/observations/'+it.id+'" target="_blank" rel="noopener">ver observación</a>';w.appendChild(a);w.appendChild(c);resEl.appendChild(w);});}catch(e){resEl.textContent="Necesitas internet para buscar grabaciones.";btnEl.disabled=false;}}
+function openSpecies(id){
+ var s=spById(id);if(!s)return;
+ var recs=getRecords(),n=0;recs.forEach(function(r){r.species.forEach(function(x){if(x.id===id)n+=x.count;});});
+ var box=$("modalBoxEl");
+ box.innerHTML='<img class="sp-photo big" src="'+s.img+'" alt="Foto de '+esc(s.nombre)+'" onerror="spImgErr(this)">'+
+  "<h3 style='margin:10px 0 2px'>"+esc(s.nombre)+'</h3><p class="sci" style="margin:0">'+esc(s.cientifico)+'</p>'+
+  '<div style="margin-top:6px"><span class="tag '+s.estado.toLowerCase()+'">'+s.estado+" · "+esc(statusLabel(s.estado))+'</span>'+(s.exclusivo?'<span class="tag exc">Solo Zapata</span>':"")+'</div>'+
+  '<p>'+esc(s.desc)+'</p><div class="clave"><b>Clave visual:</b> '+esc(s.clave)+'</div><div class="conf"><b>Se confunde con:</b> '+esc(s.confunde)+'</div>'+
+  '<p class="muted">Canto: '+esc(s.canto)+'<br>Hábitat: '+esc(s.habitat)+' · Mejor punto: '+esc(s.sendero)+'<br>Probabilidad: '+esc(s.prob)+'</p>'+
+  audioHTML(s)+'<div style="margin-top:8px"><button class="btn btn-ghost btn-small" id="liveAudioBtn" type="button">Buscar más grabaciones en línea</button><div id="liveAudioRes" class="muted" style="margin-top:6px"></div></div>'+ '<p><b>'+n+'</b> <span class="muted">individuos registrados en este dispositivo</span></p>'+
+  '<div class="toolbar"><a class="btn btn-primary btn-small" href="'+s.xc+'" target="_blank" rel="noopener">Escuchar cantos</a>'+
+  '<a class="btn btn-ghost btn-small" href="'+s.wiki+'" target="_blank" rel="noopener">Wikipedia</a>'+
+  '<button class="btn btn-ghost btn-small" id="spRegBtn">Registrar esta especie</button>'+
+  '<button class="btn btn-ghost btn-small" id="closeModalBtn">Cerrar</button></div>';
+ $("modalBackEl").classList.add("open");
+ $("closeModalBtn").addEventListener("click",function(){$("modalBackEl").classList.remove("open");});
+ $("spRegBtn").addEventListener("click",function(){$("modalBackEl").classList.remove("open");showTab("registrar");setTimeout(function(){$("spRowsCtn").innerHTML="";addSpeciesRow(s.id,1);},80);});
+ $("liveAudioBtn").addEventListener("click",function(){liveAudioSearch(s,$("liveAudioRes"),$("liveAudioBtn"));});
+}
+/* ---------- datos ---------- */
+function renderHome(){
+ var recs=getRecords();
+ var sp=new Set(),ind=0,val=0;
+ recs.forEach(function(r){r.species.forEach(function(x){sp.add(x.id);});ind+=r.total;if(r.validated)val++;});
+ $("kpiRegistrosEl").textContent=recs.length;
+ $("kpiEspeciesEl").textContent=sp.size;
+ $("kpiIndividuosEl").textContent=ind;
+ $("kpiValidadosEl").textContent=val;
+ var g=localStorage.getItem(GUIDE_KEY);
+ $("guiaAsignadoBoxEl").textContent=g?("Tu guía asignado: "+g+". Tus próximos registros lo llevarán como acompañante."):"Sin guía asignado. En la pestaña Guías puedes elegir a tu guía local.";
+}
+function drawBars(){
+ var cv=$("chartSpEl");if(!cv)return;
+ var ctx=cv.getContext("2d");
+ var recs=getRecords(),counts={};
+ recs.forEach(function(r){r.species.forEach(function(x){counts[x.id]=(counts[x.id]||0)+x.count;});});
+ var arr=Object.keys(counts).map(function(k){return {id:k,n:counts[k]};}).sort(function(a,b){return b.n-a.n;}).slice(0,8);
+ ctx.clearRect(0,0,cv.width,cv.height);
+ if(!arr.length){ctx.fillStyle="#5b6b60";ctx.font="14px system-ui";ctx.fillText("Sin datos todavía",20,40);return;}
+ var max=arr[0].n,bw=cv.width/arr.length;
+ arr.forEach(function(o,i){
+  var h=(cv.height-60)*(o.n/max);
+  ctx.fillStyle=i%2?"#237a3d":"#1b4d2e";
+  ctx.fillRect(i*bw+12,cv.height-30-h,bw-24,h);
+  ctx.fillStyle="#10231a";ctx.font="11px system-ui";ctx.textAlign="center";
+  var nm=(spById(o.id)||{nombre:o.id}).nombre;
+  ctx.fillText(nm.slice(0,10),i*bw+bw/2,cv.height-14);
+  ctx.fillText(String(o.n),i*bw+bw/2,cv.height-38-h);
+ });
+}
+function renderData(){
+ var recs=getRecords().slice().sort(function(a,b){return (b.date+b.time)>(a.date+a.time)?1:-1;});
+ var sp=new Set(),ind=0,val=0;
+ getRecords().forEach(function(r){r.species.forEach(function(x){sp.add(x.id);});ind+=r.total;if(r.validated)val++;});
+ $("dRegEl").textContent=getRecords().length;
+ $("dIndEl").textContent=ind;$("dSpEl").textContent=sp.size;
+ $("dValEl").textContent=getRecords().length?Math.round(100*val/getRecords().length)+"%":"0%";
+ drawBars();
+ var tb=$("dataTableBodyEl");tb.innerHTML="";
+ recs.forEach(function(r){
+  var tr=document.createElement("tr");
+  var spTxt=r.species.map(function(x){var s=spById(x.id);return (s?s.nombre:x.id)+" × "+x.count;}).join(", ");
+  tr.innerHTML="<td>"+esc(r.date)+"<br>"+esc(r.time||"")+"</td><td><b>"+esc(r.observer)+"</b><br><span class='muted'>"+esc(r.role)+(r.guide?" · "+esc(r.guide):"")+"<br>"+esc(r.trail)+"</span></td><td>"+esc(spTxt)+"</td><td><b>"+r.total+"</b></td><td class='muted'>"+r.lat.toFixed(3)+", "+r.lng.toFixed(3)+"</td><td>"+(r.validated?"Validado":"Pendiente")+"</td>";
+  var td=document.createElement("td");
+  var bV=document.createElement("button");bV.className="btn btn-ghost btn-small";bV.textContent=r.validated?"Quitar validación":"Validar";bV.style.marginBottom="4px";
+  bV.addEventListener("click",function(){var all=getRecords();var f=all.find(function(x){return x.id===r.id;});if(f){f.validated=!f.validated;f.validatedBy=f.validated?(f.guide||f.observer):"";saveRecords(all);renderData();renderHome();toast(f.validated?"Registro validado":"Validación retirada");}});
+  var bS=document.createElement("button");bS.className="btn btn-ghost btn-small";bS.textContent="Ver";bS.style.marginBottom="4px";
+  bS.addEventListener("click",function(){openDetail(r.id);});
+  var bD=document.createElement("button");bD.className="btn btn-danger btn-small";bD.textContent="Borrar";
+  bD.addEventListener("click",function(){if(confirm("Borrar este registro?")){saveRecords(getRecords().filter(function(x){return x.id!==r.id;}));renderData();renderHome();toast("Registro borrado");}});
+  td.appendChild(bV);td.appendChild(document.createElement("br"));td.appendChild(bS);td.appendChild(document.createTextNode(" "));td.appendChild(bD);
+  tr.appendChild(td);tb.appendChild(tr);
+ });
+}
+function openDetail(id){
+ var r=getRecords().find(function(x){return x.id===id;});if(!r)return;
+ var box=$("modalBoxEl");
+ var spTxt=r.species.map(function(x){var s=spById(x.id);var im=s&&s.img?'<img class="sp-mini" src="'+s.img+'" alt="" loading="lazy" onerror="this.style.display='+String.fromCharCode(39)+'none'+String.fromCharCode(39)+'">':"";var canto=s&&s.xc?' · <a href="'+s.xc+'" target="_blank" rel="noopener">canto</a>':"";return "<li>"+im+"<b>"+esc(s?s.nombre:x.id)+"</b> <span class='muted'>"+esc(s?s.cientifico:"")+"</span> — "+x.count+" individuos"+canto+"</li>";}).join("");
+ box.innerHTML="<h3 style='margin-top:0'>"+esc(r.observer)+" · "+esc(r.date)+"</h3>"+
+  "<p class='muted'>"+esc(r.trail)+" · "+esc(r.habitat)+" · "+r.lat.toFixed(5)+", "+r.lng.toFixed(5)+" · "+(r.validated?"Validado por "+esc(r.validatedBy||"guía"):"Pendiente")+"</p>"+
+  "<ul>"+spTxt+"</ul>"+(r.notes?"<p>"+esc(r.notes)+"</p>":"")+
+  (r.photos||[]).map(function(p){return '<img src="'+p+'" style="margin-bottom:8px">';}).join("")+
+  (r.video&&r.video.dataUrl?'<video class="video-preview" controls src="'+r.video.dataUrl+'"></video>':(r.video?("<p class='muted'>Video: "+esc(r.video.name||"adjunto")+"</p>"):""))+
+  '<div class="toolbar"><button class="btn btn-ghost" id="closeModalBtn">Cerrar</button></div>';
+ $("modalBackEl").classList.add("open");
+ $("closeModalBtn").addEventListener("click",function(){$("modalBackEl").classList.remove("open");});
+}
+$("modalBackEl").addEventListener("click",function(e){if(e.target===$("modalBackEl"))$("modalBackEl").classList.remove("open");});
+
+function toCSV(){
+ var recs=getRecords();
+ var rows=[["id","observador","rol","guia","fecha","hora","sendero","habitat","esfuerzo_min","especie","nombre_cientifico","cantidad","total_registro","lat","lng","precision_m","validado","notas"].join(",")];
+ recs.forEach(function(r){
+  r.species.forEach(function(x){
+   var s=spById(x.id);
+   rows.push([r.id,r.observer,r.role,r.guide||"",r.date,r.time||"",r.trail,r.habitat,r.duration,(s?s.nombre:x.id),(s?s.cientifico:""),x.count,r.total,r.lat,r.lng,r.acc==null?"":r.acc,r.validated?"si":"no",'"'+(r.notes||"").replace(/"/g,'""')+'"'].map(function(v){return String(v).indexOf(",")>=0?'"'+String(v).replace(/"/g,'""')+'"':v;}).join(","));
+  });
+ });
+ return rows.join("\n");
+}
+function download(name,content,type){
+ var b=new Blob([content],{type:type});var u=URL.createObjectURL(b);
+ var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();
+ setTimeout(function(){URL.revokeObjectURL(u);a.remove();},500);
+}
+
+/* ---------- guías ---------- */
+function renderGuides(){
+ var c=$("guidesCtn");c.innerHTML="";
+ var assigned=localStorage.getItem(GUIDE_KEY)||"";
+ GUIDES.forEach(function(g){
+  var d=document.createElement("div");d.className="guide";
+  d.innerHTML='<div class="avatar">'+esc(g.nombre.split(" ").map(function(w){return w[0];}).slice(0,2).join(""))+'</div>'+
+   "<div><b>"+esc(g.nombre)+"</b><br><small>"+esc(g.zona)+" · "+esc(g.idiomas)+"<br>"+esc(g.esp)+" · "+esc(g.exp)+"<br>"+esc(g.tel)+"</small>"+
+   "<div class='toolbar'><button class='btn "+(assigned===g.nombre?"btn-primary":"btn-ghost")+" btn-small'>"+(assigned===g.nombre?"Guía asignado":"Elegir como mi guía")+"</button></div></div>";
+  d.querySelector("button").addEventListener("click",function(){
+   localStorage.setItem(GUIDE_KEY,g.nombre);
+   var sel=$("obsGuiaInput");if(sel)sel.value=g.nombre;
+   renderGuides();renderHome();toast("Guía asignado: "+g.nombre);
+  });
+  c.appendChild(d);
+ });
+ var sel=$("obsGuiaInput");
+ if(sel&&sel.options.length<=1){
+  GUIDES.forEach(function(g){var o=document.createElement("option");o.value=g.nombre;o.textContent=g.nombre+" — "+g.zona;sel.appendChild(o);});
+  if(assigned)sel.value=assigned;
+ }
+}
+
+/* ---------- wiring ---------- */
+$("addSpBtn").addEventListener("click",function(){addSpeciesRow(null,1);});
+$("gotoGuideLink").addEventListener("click",function(e){e.preventDefault();showTab("especies");});
+$("gpsBtn").addEventListener("click",function(){
+ if(!navigator.geolocation){toast("Este dispositivo no tiene GPS");return;}
+ toast("Localizando GPS...");
+ navigator.geolocation.getCurrentPosition(function(p){
+  if(formMap){formMap.setView([p.coords.latitude,p.coords.longitude],14);}
+  setFormPoint(p.coords.latitude,p.coords.longitude,p.coords.accuracy);
+  toast("GPS fijado ±"+Math.round(p.coords.accuracy)+" m");
+ },function(){toast("No se pudo obtener el GPS. Revisa permisos.");},{enableHighAccuracy:true,timeout:15000});
+});
+$("centerZapataBtn").addEventListener("click",function(){
+ if(formMap)formMap.setView(ZAPATA_CENTER,10);
+ setFormPoint(ZAPATA_CENTER[0],ZAPATA_CENTER[1],null);
+});
+["latInput","lngInput"].forEach(function(id){
+ $(id).addEventListener("change",function(){
+  var la=parseFloat($("latInput").value),ln=parseFloat($("lngInput").value);
+  if(isFinite(la)&&isFinite(ln)){setFormPoint(la,ln,formState.acc);if(formMap)formMap.setView([la,ln],12);}
+ });
+});
+$("fotoInput").addEventListener("change",async function(e){
+ var files=Array.prototype.slice.call(e.target.files||[]).slice(0,6-formState.photos.length);
+ for(var i=0;i<files.length;i++){
+  try{var d=await compressImage(files[i]);formState.photos.push(d);}catch(err){toast("No se pudo leer una foto");}
+ }
+ renderPhotoThumbs();e.target.value="";
+});
+$("videoInput").addEventListener("change",function(e){
+ var f=e.target.files&&e.target.files[0];if(!f)return;
+ var box=$("videoPrevCtn");box.innerHTML="";
+ if(f.size>8*1024*1024){
+  formState.video={name:f.name,size:f.size,dataUrl:null};
+  box.innerHTML='<p class="notice">Video demasiado grande para guardar en el teléfono ('+(f.size/1048576).toFixed(1)+' MB). Se guardará solo el nombre como referencia.</p>';
+ }else{
+  var rd=new FileReader();
+  rd.onload=function(){formState.video={name:f.name,size:f.size,dataUrl:rd.result};box.innerHTML='<video class="video-preview" controls src="'+rd.result+'"></video>';};
+  rd.readAsDataURL(f);
+ }
+});
+$("clearFormBtn").addEventListener("click",function(){
+ $("spRowsCtn").innerHTML="";addSpeciesRow(null,1);
+ formState.photos=[];formState.video=null;renderPhotoThumbs();$("videoPrevCtn").innerHTML="";
+ $("notasInput").value="";$("saveMsgEl").innerHTML="";updateTotals();
+});
+$("saveBtn").addEventListener("click",function(){
+ var r=collectForm();
+ if(r.error){$("saveMsgEl").innerHTML='<p class="notice">'+esc(r.error)+"</p>";return;}
+ var all=getRecords();all.push(r.rec);saveRecords(all);
+ $("saveMsgEl").innerHTML='<p class="okbox">Avistamiento guardado: '+r.rec.total+" individuos en "+r.rec.species.length+" especies. Gracias por colaborar con la conservación.</p>";
+ formState.photos=[];formState.video=null;renderPhotoThumbs();$("videoPrevCtn").innerHTML="";$("notasInput").value="";
+ $("spRowsCtn").innerHTML="";addSpeciesRow(null,1);renderHome();
+ toast("Guardado correctamente");
+});
+$("mapSpFilterInput").addEventListener("change",renderMainMap);
+$("mapRolFilterInput").addEventListener("change",renderMainMap);
+$("mapValFilterInput").addEventListener("change",renderMainMap);
+$("spSearchInput").addEventListener("input",renderSpeciesGrid);
+$("spStatusFilterInput").addEventListener("change",renderSpeciesGrid);
+$("exportCsvBtn").addEventListener("click",function(){download("zapata_avistamientos.csv",toCSV(),"text/csv");toast("CSV descargado");});
+$("exportJsonBtn").addEventListener("click",function(){download("zapata_avistamientos.json",JSON.stringify(getRecords(),null,2),"application/json");toast("JSON descargado");});
+$("importJsonBtn").addEventListener("click",function(){$("importFileInput").click();});
+$("importFileInput").addEventListener("change",function(e){
+ var f=e.target.files[0];if(!f)return;
+ var rd=new FileReader();
+ rd.onload=function(){try{var a=JSON.parse(rd.result);if(!Array.isArray(a))throw 0;saveRecords(a);renderData();renderHome();toast("Importados "+a.length+" registros");}catch(err){toast("Archivo inválido");}};
+ rd.readAsText(f);e.target.value="";
+});
+$("wipeBtn").addEventListener("click",function(){
+ if(confirm("Borrar TODOS los registros de este dispositivo?")){
+  localStorage.removeItem(LS_KEY);renderData();renderHome();
+  if(mainMap)renderMainMap();toast("Datos borrados");
+ }
+});
+
+/* init */
+$("obsFechaInput").value=todayStr();$("obsHoraInput").value=nowTime();
+$("spRowsCtn").innerHTML="";addSpeciesRow("cartacuba",2);addSpeciesRow("chillina",4);
+renderGuides();renderSpeciesGrid();renderHome();
+setFormPoint(ZAPATA_CENTER[0],ZAPATA_CENTER[1],null);
+})();
+</script>
