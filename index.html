@@ -9,8 +9,8 @@
 }
 *{box-sizing:border-box}
 html{color-scheme:light}
-body{text-align:left;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,sans-serif;background:var(--arena);color:var(--tinta);line-height:1.5}
-.topbar{background:linear-gradient(135deg,var(--verde-900),var(--verde-700));color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:500}
+body{text-align:left;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Ubuntu,Cantarell,sans-serif;color:var(--tinta);line-height:1.5;background:linear-gradient(rgba(240,248,242,.82),rgba(240,248,242,.86)),url("https://user.uploads.dev/file/a3047a334749dfa0a83e3d6c68d9391c.jpg") center/cover fixed no-repeat,var(--arena)}
+.topbar{background:linear-gradient(135deg,rgba(13,40,24,.93),rgba(27,77,46,.89));color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:500;backdrop-filter:blur(6px)}
 .topbar-row{max-width:1100px;margin:0 auto;display:flex;gap:12px;align-items:center}
 .logo-mark{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:#ffffff22;display:flex;align-items:center;justify-content:center;border:1px solid #ffffff44}
 .topbar h1{font-size:17px;margin:0;line-height:1.2}
@@ -20,7 +20,7 @@ body{text-align:left;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Rob
 .tabBtn{flex:0 0 auto;border:1px solid #ffffff44;background:#ffffff1e;color:#fff;border-radius:999px;padding:8px 14px;font-size:13.5px;font-weight:650;cursor:pointer}
 .tabBtn.active{background:#fff;color:var(--verde-900)}
 main{max-width:1100px;margin:0 auto;padding:14px 14px 90px}
-.card{background:#fff;border-radius:var(--radio);box-shadow:var(--sombra);padding:16px;margin-bottom:14px;border:1px solid #e4e9e2}
+.card{background:rgba(255,255,255,.9);border-radius:var(--radio);backdrop-filter:blur(7px);box-shadow:var(--sombra);padding:16px;margin-bottom:14px;border:1px solid #e4e9e2}
 .card h2{margin:0 0 6px;font-size:19px}
 .card h3{margin:14px 0 8px;font-size:15px}
 .muted{color:var(--gris);font-size:13.5px}
@@ -65,7 +65,7 @@ textarea{min-height:90px;resize:vertical}
 .species-grid{display:grid;grid-template-columns:1fr;gap:10px}
 @media(min-width:640px){.species-grid{grid-template-columns:1fr 1fr}}
 @media(min-width:980px){.species-grid{grid-template-columns:1fr 1fr 1fr}}
-.sp-card{border:1px solid #e1e7e0;border-radius:12px;padding:12px;background:#fff;display:flex;flex-direction:column;gap:6px}
+.sp-card{border:1px solid #e1e7e0;border-radius:12px;padding:12px;background:rgba(255,255,255,.92);display:flex;flex-direction:column;gap:6px}
 .sp-card .sci{font-style:italic;color:var(--gris);font-size:13px}
 .tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;margin-right:6px}
 .tag.en{background:#fdecea;color:#9c2b1f;border:1px solid #f5c6c0}
@@ -84,7 +84,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 .toast.show{display:block}
 .modal-back{position:fixed;inset:0;background:rgba(10,25,16,.55);display:none;align-items:center;justify-content:center;z-index:1500;padding:14px}
 .modal-back.open{display:flex}
-.modal{background:#fff;border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:18px}
+.modal{background:rgba(255,255,255,.97);border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:18px}
 .modal img{max-width:100%;border-radius:10px}
 .guide{display:grid;grid-template-columns:64px 1fr;gap:12px;border:1px solid #e2e8e1;border-radius:12px;padding:12px;margin-bottom:10px}
 .avatar{width:64px;height:64px;border-radius:12px;background:var(--verde-700);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
@@ -97,7 +97,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px}
 .notice{background:#fff8e1;border:1px solid #f0d9a8;border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0}
 .okbox{background:#e9f5ec;border:1px solid #bfe3c8;border-radius:10px;padding:10px 12px;font-size:13.5px;margin:10px 0}
 canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3;border-radius:10px}
-.foot{max-width:1100px;margin:0 auto;padding:0 14px 100px;color:var(--gris);font-size:12.5px}
+.foot{max-width:1100px;margin:0 auto 90px;padding:10px 14px;background:rgba(255,255,255,.72);border-radius:12px;color:var(--gris);font-size:12.5px}
 .hidden{display:none !important}
 .req::after{content:" *";color:var(--rojo)}
 .hint{font-size:12.5px;color:var(--gris);margin-top:4px}
@@ -131,7 +131,7 @@ canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3
     <button class="tabBtn" data-tab="mapa">Mapa</button>
     <button class="tabBtn" data-tab="especies">Especies</button>
     <button class="tabBtn" data-tab="datos">Datos</button>
-    <button class="tabBtn" data-tab="guias">Guías</button>
+    <button class="tabBtn" data-tab="admin">Admin</button>
   </nav>
 </header>
 
@@ -145,14 +145,13 @@ canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3
           <div class="kpi"><b id="kpiRegistrosEl">0</b><span>avistamientos</span></div>
           <div class="kpi"><b id="kpiEspeciesEl">0</b><span>especies distintas</span></div>
           <div class="kpi"><b id="kpiIndividuosEl">0</b><span>individuos contados</span></div>
-          <div class="kpi"><b id="kpiValidadosEl">0</b><span>validados por guías</span></div>
+          <div class="kpi"><b id="kpiValidadosEl">0</b><span>validados</span></div>
         </div>
         <div class="toolbar">
           <button class="btn btn-primary" data-goto="registrar">Registrar avistamiento</button>
           <button class="btn btn-ghost" data-goto="mapa">Ver mapa de avistamientos</button>
         </div>
-        <div class="okbox" id="guiaAsignadoBoxEl">Sin guía asignado. En la pestaña Guías puedes elegir a tu guía local.</div>
-      </div>
+              </div>
       <div class="hero-visual">
         <h3 style="margin:0 0 6px">El humedal más importante del Caribe</h3>
         <p style="margin:0 0 10px;font-size:13.5px;opacity:.92">Más de 200 especies de aves. Tres endémicas viven solo aquí: Fermina, Gallinuela de Santo Tomás y la subespecie del Cabrerito de la Ciénaga. El Zunzuncito, el ave más pequeña del mundo, también habita estos bosques.</p>
@@ -194,8 +193,8 @@ canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3
           </select>
         </div>
         <div>
-          <label class="lbl" for="obsGuiaInput">Guía acompañante</label>
-          <select id="obsGuiaInput"><option value="">Sin guía / no recuerdo</option></select>
+          <label class="lbl" for="obsGuiaInput">Acompañante o guía local</label>
+          <input type="text" id="obsGuiaInput" placeholder="Nombre, si aplica (opcional)">
         </div>
       </div>
       <div class="row row3">
@@ -313,12 +312,51 @@ canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3
     </div>
   </section>
 
-  <section id="tab-guias" hidden>
-    <div class="card">
-      <h2>Guías locales</h2>
-      <p class="muted">Formados en los talleres del Parque: identificación de endémicas, ética de observación, GPS y validación de datos. Elige a tu guía y tus registros quedarán asociados a su acompañamiento.</p>
-      <div id="guidesCtn"></div>
-      <div class="notice">¿Eres guía y quieres aparecer aquí? Anota tu nombre en el registro como rol Guía local. La validación la haces desde la pestaña Datos, marcando registros como validados.</div>
+    <section id="tab-admin" hidden>
+    <div class="card" id="adminLockCard">
+      <h2>Administración</h2>
+      <p class="muted">Zona del personal del Parque: validar avistamientos, corregir registros y personalizar los textos de la página. Todo se guarda en este dispositivo.</p>
+      <p class="hint">PIN inicial: 1234. Cámbialo dentro del panel.</p>
+      <label class="lbl" for="adminPinInput">PIN de acceso</label>
+      <input type="password" id="adminPinInput" inputmode="numeric" autocomplete="off" style="max-width:220px">
+      <div class="toolbar"><button class="btn btn-primary" id="adminUnlockBtn">Entrar</button></div>
+      <div id="adminLockMsgEl"></div>
+    </div>
+    <div id="adminPanel" hidden>
+      <div class="card">
+        <h2>Validación de avistamientos</h2>
+        <p class="muted">Revisa cada registro antes de exportarlo a investigación. Los validados aparecen en verde en el mapa.</p>
+        <div class="toolbar"><button class="btn btn-primary btn-small" id="valAllBtn">Validar todos los pendientes</button></div>
+        <h3>Pendientes (<span id="pendCountEl">0</span>)</h3>
+        <div id="pendListCtn"></div>
+        <h3>Validados (<span id="valCountEl">0</span>)</h3>
+        <div id="valListCtn"></div>
+      </div>
+      <div class="card">
+        <h2>Personalizar página</h2>
+        <p class="muted">Cambia los textos principales sin tocar código. Se aplican al instante y se guardan en este dispositivo.</p>
+        <label class="lbl" for="cfgTitleInput">Título superior</label>
+        <input type="text" id="cfgTitleInput">
+        <label class="lbl" for="cfgSubInput">Subtítulo</label>
+        <input type="text" id="cfgSubInput">
+        <label class="lbl" for="cfgHeroInput">Texto del héroe (recuadro verde)</label>
+        <textarea id="cfgHeroInput"></textarea>
+        <div class="toolbar">
+          <button class="btn btn-primary btn-small" id="cfgSaveBtn">Guardar textos</button>
+          <button class="btn btn-ghost btn-small" id="cfgResetBtn">Restablecer originales</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Seguridad y datos</h2>
+        <label class="lbl" for="newPinInput">Cambiar PIN (4 o más dígitos)</label>
+        <input type="password" id="newPinInput" inputmode="numeric" autocomplete="off" style="max-width:220px">
+        <div class="toolbar">
+          <button class="btn btn-ghost btn-small" id="pinSaveBtn">Guardar PIN</button>
+          <button class="btn btn-ghost btn-small" id="reseedBtn">Restaurar datos de ejemplo</button>
+          <button class="btn btn-danger btn-small" id="adminLockBtn">Bloquear panel</button>
+        </div>
+        <p class="muted" id="storageEl"></p>
+      </div>
     </div>
   </section>
 </main>
@@ -331,7 +369,7 @@ canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3
   <button data-tab="datos"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Datos</button>
 </nav>
 
-<div class="foot">Hecho para la Ciénaga de Zapata · Los datos se guardan en tu dispositivo (offline-first). Exporta y comparte con el Parque Nacional para conservación. Las coordenadas se muestran con 5 decimales. Fotos: Wikimedia Commons mediante Wikipedia (crédito en cada ficha). Cantos: xeno-canto.</div>
+<div class="foot">Hecho para la Ciénaga de Zapata · Los datos se guardan en tu dispositivo (offline-first). Exporta y comparte con el Parque Nacional para conservación. Las coordenadas se muestran con 5 decimales. Fotos: Wikimedia Commons (crédito en cada ficha). Cantos: iNaturalist y xeno-canto.</div>
 <div class="toast" id="toastEl"></div>
 <div class="modal-back" id="modalBackEl"><div class="modal" id="modalBoxEl"></div></div>
 
@@ -340,7 +378,7 @@ canvas.chart{width:100%;height:230px;background:#fbfdfb;border:1px solid #e4eae3
 (function(){
 "use strict";
 var LS_KEY = "zapata_aves_v1";
-var GUIDE_KEY = "zapata_guia_asignado";
+var ADMIN_PIN_KEY = "zapata_admin_pin", SITE_KEY = "zapata_site_cfg", adminOpen = false;
 var ZAPATA_CENTER = [22.32, -81.62];
 
 window.ZAPATA_SPECIES = [
@@ -367,13 +405,6 @@ window.ZAPATA_SPECIES = [
  {id:"chillina",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Yellow-headed_Warbler_%28Teretistris_fernandinae%29_cropped.jpg/330px-Yellow-headed_Warbler_%28Teretistris_fernandinae%29_cropped.jpg",wiki:"https://en.wikipedia.org/wiki/Yellow-headed_warbler",xc:"https://xeno-canto.org/species/Teretistris-fernandinae",clave:"Cabeza amarilla intensa y cuerpo gris; lidera bandadas mixtas.",confunde:"Bijiritas migratorias: ninguna combina cabeza amarilla con cuerpo gris.",nombre:"Chillina",cientifico:"Teretistris fernandinae",estado:"LC",exclusivo:false,habitat:"Bosque semideciduo",sendero:"La Turba",prob:"Muy alta",desc:"Reinita de cabeza amarilla que lidera bandadas mixtas. Curiosa, se acerca al observador quieto.",canto:"Chillidos nasales en grupo."},
  {id:"cabrero",audio:"https://static.inaturalist.org/sounds/1359105.wav?1743635931",audioBy:"yan_tonz",audioObs:"https://www.inaturalist.org/observations/268299147",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/Western_spindalis_%28Spindalis_zena_pretrei%29_male.JPG/330px-Western_spindalis_%28Spindalis_zena_pretrei%29_male.JPG",wiki:"https://en.wikipedia.org/wiki/Western_spindalis",xc:"https://xeno-canto.org/species/Spindalis-zena",clave:"Macho de capucha castaña, mejilla blanca y vientre naranja.",confunde:"Ningún ave del bosque combina capucha castaña y vientre naranja.",nombre:"Cabrero",cientifico:"Spindalis zena pretrei",estado:"LC",exclusivo:false,habitat:"Bosque y frutales",sendero:"Bermejas",prob:"Media",desc:"Tangara cubana de capucha castaña y vientre anaranjado. Come frutos en parejas.",canto:"Siseo fino y prolongado."},
  {id:"gavilan",audio:"https://static.inaturalist.org/sounds/28992.mp3?1546917394",audioBy:"mjfeldman",audioObs:"https://www.inaturalist.org/observations/19500972",img:"https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Cuban_black_hawk_%28Buteogallus_gundlachii%29.jpg/330px-Cuban_black_hawk_%28Buteogallus_gundlachii%29.jpg",wiki:"https://en.wikipedia.org/wiki/Cuban_black_hawk",xc:"https://xeno-canto.org/species/Buteogallus-gundlachii",clave:"Rapaz oscura de manglar: alas anchas y cola con una banda blanca.",confunde:"Gavilán de Monte: de bosque interior, con cola de barras finas.",nombre:"Gavilán Batista",cientifico:"Buteogallus gundlachii",estado:"NT",exclusivo:false,habitat:"Manglar y costa",sendero:"Las Salinas",prob:"Baja · planeos",desc:"Rapaz de manglar, planea bajo sobre cangrejales. Dato valioso: anota hora y dirección de vuelo.",canto:"Silbido agudo en planeo."}
-];
-
-var GUIDES = [
- {id:"g-levi",nombre:"Levi Fernández",zona:"Santo Tomás / Soplillar",idiomas:"ES · EN básico",esp:"Fermina y rálidos · canto",exp:"12 años · 1800 salidas",tel:"+53 5 000 0001"},
- {id:"g-yanis",nombre:"Yanisleidy Cruz",zona:"Las Salinas / Bermejas",idiomas:"ES · EN · FR básico",esp:"Limícolas y rapaces · foto",exp:"9 años · talleres 2022-2025",tel:"+53 5 000 0002"},
- {id:"g-odalys",nombre:"Odalys Padrón",zona:"La Turba / Palpite",idiomas:"ES · EN",esp:"Endémicas de bosque · familias",exp:"11 años · guía certificada",tel:"+53 5 000 0003"},
- {id:"g-reynier",nombre:"Reynier Soto",zona:"Hatiguanico / noche",idiomas:"ES",esp:"Sijú y nocturnas · GPS",exp:"7 años · validación de datos",tel:"+53 5 000 0004"}
 ];
 
 var formState = {lat:null,lng:null,acc:null,photos:[],video:null};
@@ -411,7 +442,7 @@ function seedRecords(){
 }
 
 function showTab(name){
- var secs=["inicio","registrar","mapa","especies","datos","guias"];
+ var secs=["inicio","registrar","mapa","especies","datos","admin"];
  secs.forEach(function(s){$("tab-"+s).hidden=(s!==name);});
  document.querySelectorAll("#topTabs .tabBtn").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-tab")===name);});
  document.querySelectorAll("#bottomNav button").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-tab")===name);});
@@ -420,11 +451,16 @@ function showTab(name){
  if(name==="registrar")setTimeout(initFormMap,60);
  if(name==="datos")renderData();
  if(name==="inicio")renderHome();
+ if(name==="admin")renderAdmin();
 }
 document.querySelectorAll("[data-tab]").forEach(function(b){b.addEventListener("click",function(){showTab(b.getAttribute("data-tab"));});});
 document.querySelectorAll("[data-goto]").forEach(function(b){b.addEventListener("click",function(){showTab(b.getAttribute("data-goto"));});});
 
-/* ---------- formulario ---------- */
+
+var TRAILS = ["La Turba","Santo Tomás - Soplillar","Las Salinas","Bermejas","Palpite - La Boca","Playa Girón - Cueva de los Peces","Hatiguanico","Otro punto de la Ciénaga"];
+var HABITATS = ["Bosque semideciduo","Manglar","Ciénaga herbácea","Salina costera","Palmar","Playa y costa","Área rural / lindero"];
+var DEFAULT_SITE = {title:"Ciénaga de Zapata · Aves Endémicas",sub:"Turistas y guías locales registrando ciencia para la conservación",hero:"Más de 200 especies de aves. Tres endémicas viven solo aquí: Fermina, Gallinuela de Santo Tomás y la subespecie del Cabrerito de la Ciénaga. El Zunzuncito, el ave más pequeña del mundo, también habita estos bosques."};
+/* ---------- formulario ---------- *//* ---------- formulario ---------- */
 function spOptionsHTML(sel){
  return window.ZAPATA_SPECIES.map(function(s){
   return '<option value="'+s.id+'"'+(s.id===sel?" selected":"")+'>'+esc(s.nombre)+" — "+esc(s.cientifico)+"</option>";
@@ -638,8 +674,7 @@ function renderHome(){
  $("kpiEspeciesEl").textContent=sp.size;
  $("kpiIndividuosEl").textContent=ind;
  $("kpiValidadosEl").textContent=val;
- var g=localStorage.getItem(GUIDE_KEY);
- $("guiaAsignadoBoxEl").textContent=g?("Tu guía asignado: "+g+". Tus próximos registros lo llevarán como acompañante."):"Sin guía asignado. En la pestaña Guías puedes elegir a tu guía local.";
+ 
 }
 function drawBars(){
  var cv=$("chartSpEl");if(!cv)return;
@@ -717,29 +752,71 @@ function download(name,content,type){
 }
 
 /* ---------- guías ---------- */
-function renderGuides(){
- var c=$("guidesCtn");c.innerHTML="";
- var assigned=localStorage.getItem(GUIDE_KEY)||"";
- GUIDES.forEach(function(g){
-  var d=document.createElement("div");d.className="guide";
-  d.innerHTML='<div class="avatar">'+esc(g.nombre.split(" ").map(function(w){return w[0];}).slice(0,2).join(""))+'</div>'+
-   "<div><b>"+esc(g.nombre)+"</b><br><small>"+esc(g.zona)+" · "+esc(g.idiomas)+"<br>"+esc(g.esp)+" · "+esc(g.exp)+"<br>"+esc(g.tel)+"</small>"+
-   "<div class='toolbar'><button class='btn "+(assigned===g.nombre?"btn-primary":"btn-ghost")+" btn-small'>"+(assigned===g.nombre?"Guía asignado":"Elegir como mi guía")+"</button></div></div>";
-  d.querySelector("button").addEventListener("click",function(){
-   localStorage.setItem(GUIDE_KEY,g.nombre);
-   var sel=$("obsGuiaInput");if(sel)sel.value=g.nombre;
-   renderGuides();renderHome();toast("Guía asignado: "+g.nombre);
-  });
-  c.appendChild(d);
- });
- var sel=$("obsGuiaInput");
- if(sel&&sel.options.length<=1){
-  GUIDES.forEach(function(g){var o=document.createElement("option");o.value=g.nombre;o.textContent=g.nombre+" — "+g.zona;sel.appendChild(o);});
-  if(assigned)sel.value=assigned;
+function getPin(){return localStorage.getItem(ADMIN_PIN_KEY)||"1234";}
+function getSite(){try{var s=JSON.parse(localStorage.getItem(SITE_KEY));if(s&&s.title)return s;}catch(e){}return {title:DEFAULT_SITE.title,sub:DEFAULT_SITE.sub,hero:DEFAULT_SITE.hero};}
+function applySiteCfg(){var s=getSite();var h=document.querySelector(".topbar h1");if(h)h.textContent=s.title;var p=document.querySelector(".topbar p");if(p)p.textContent=s.sub;var hx=document.querySelector(".hero-visual p");if(hx)hx.textContent=s.hero;if($("cfgTitleInput")&&!$("cfgTitleInput").value)$("cfgTitleInput").value=s.title;if($("cfgSubInput")&&!$("cfgSubInput").value)$("cfgSubInput").value=s.sub;if($("cfgHeroInput")&&!$("cfgHeroInput").value)$("cfgHeroInput").value=s.hero;}
+function afterAdminChange(){renderAdmin();renderData();renderHome();if(mainMap)renderMainMap();}
+function setVal(id,v){var all=getRecords();for(var i=0;i<all.length;i++){if(all[i].id===id){all[i].validated=v;all[i].validatedBy=v?"Administración":"";}}saveRecords(all);afterAdminChange();toast(v?"Registro validado":"Validación retirada");}
+function renderAdmin(){
+ var all=getRecords().slice().sort(function(a,b){return (b.date+b.time)>(a.date+a.time)?1:-1;});
+ var pend=all.filter(function(r){return !r.validated;}), val=all.filter(function(r){return r.validated;});
+ $("pendCountEl").textContent=pend.length;$("valCountEl").textContent=val.length;
+ function item(r){
+  var d=document.createElement("div");d.className="card";d.style.marginBottom="8px";
+  var sp=r.species.map(function(x){var s=spById(x.id);return (s?s.nombre:x.id)+" × "+x.count;}).join(", ");
+  var h=document.createElement("div");h.innerHTML="<b>"+esc(r.observer)+"</b> <span class='muted'>· "+esc(r.date)+" "+esc(r.time||"")+"</span><br><small>"+esc(sp)+" · total "+r.total+" · "+esc(r.trail)+"</small>";
+  d.appendChild(h);
+  var t=document.createElement("div");t.className="media-btns";
+  function mk(label,fn,cls){var b=document.createElement("button");b.className="btn "+(cls||"btn-ghost")+" btn-small";b.textContent=label;b.addEventListener("click",fn);t.appendChild(b);}
+  if(r.validated){mk("Quitar validación",function(){setVal(r.id,false);});}else{mk("Validar",function(){setVal(r.id,true);},"btn-primary");}
+  mk("Ver",function(){openDetail(r.id);});
+  mk("Editar",function(){openEdit(r.id);});
+  mk("Borrar",function(){if(confirm("Borrar este registro?")){saveRecords(getRecords().filter(function(x){return x.id!==r.id;}));afterAdminChange();}},"btn-danger");
+  d.appendChild(t);return d;
  }
+ var pc=$("pendListCtn");pc.innerHTML="";pend.forEach(function(r){pc.appendChild(item(r));});
+ if(!pend.length)pc.innerHTML='<p class="muted">Sin pendientes. Todo validado.</p>';
+ var vc=$("valListCtn");vc.innerHTML="";val.forEach(function(r){vc.appendChild(item(r));});
+ if(!val.length)vc.innerHTML='<p class="muted">Aún no hay validados.</p>';
+ try{var kb=Math.round(((localStorage.getItem(LS_KEY)||"").length+(localStorage.getItem(SITE_KEY)||"").length)/102.4)/10;$("storageEl").textContent="Espacio usado en este dispositivo: "+kb+" KB de registros y textos.";}catch(e){}
+}
+function openEdit(id){
+ var r=null;getRecords().forEach(function(x){if(x.id===id)r=x;});if(!r)return;
+ var box=$("modalBoxEl");
+ function opts(arr,cur){var h=arr.map(function(o){return '<option value="'+esc(o)+'"'+(o===cur?" selected":"")+'>'+esc(o)+'</option>';}).join("");if(arr.indexOf(cur)<0&&cur)h+='<option value="'+esc(cur)+'" selected>'+esc(cur)+'</option>';return h;}
+ box.innerHTML="<h3 style='margin-top:0'>Editar registro</h3>"+
+  '<label class="lbl">Observador</label><input type="text" id="edObsInput" value="'+esc(r.observer)+'">'+
+  '<div class="row row2"><div><label class="lbl">Fecha</label><input type="date" id="edDateInput" value="'+esc(r.date)+'"></div>'+
+  '<div><label class="lbl">Hora</label><input type="time" id="edTimeInput" value="'+esc(r.time||"")+'"></div></div>'+
+  '<div class="row row2"><div><label class="lbl">Sendero</label><select id="edTrailInput">'+opts(TRAILS,r.trail)+'</select></div>'+
+  '<div><label class="lbl">Hábitat</label><select id="edHabInput">'+opts(HABITATS,r.habitat)+'</select></div></div>'+
+  '<label class="lbl">Acompañante</label><input type="text" id="edGuideInput" value="'+esc(r.guide||"")+'">'+
+  '<label class="lbl">Notas</label><textarea id="edNotesInput">'+esc(r.notes||"")+'</textarea>'+
+  '<p class="muted">Especies y conteo: '+esc(r.species.map(function(x){var s=spById(x.id);return (s?s.nombre:x.id)+" × "+x.count;}).join(", "))+' (para corregir especies, borra y crea el registro de nuevo)</p>'+
+  '<div class="toolbar"><button class="btn btn-primary btn-small" id="edSaveBtn">Guardar cambios</button> <button class="btn btn-ghost btn-small" id="closeModalBtn">Cancelar</button></div>';
+ $("modalBackEl").classList.add("open");
+ $("closeModalBtn").addEventListener("click",function(){$("modalBackEl").classList.remove("open");});
+ $("edSaveBtn").addEventListener("click",function(){
+  var all=getRecords();var f=null;for(var i=0;i<all.length;i++){if(all[i].id===id)f=all[i];}if(!f)return;
+  f.observer=$("edObsInput").value.trim()||f.observer;f.date=$("edDateInput").value||f.date;f.time=$("edTimeInput").value;
+  f.trail=$("edTrailInput").value;f.habitat=$("edHabInput").value;f.guide=$("edGuideInput").value.trim();f.notes=$("edNotesInput").value.trim();
+  saveRecords(all);$("modalBackEl").classList.remove("open");afterAdminChange();toast("Registro actualizado");
+ });
+}
+function wireAdmin(){
+ $("adminUnlockBtn").addEventListener("click",function(){
+  if($("adminPinInput").value===getPin()){adminOpen=true;$("adminLockCard").hidden=true;$("adminPanel").hidden=false;renderAdmin();toast("Panel abierto");}
+  else{$("adminLockMsgEl").innerHTML='<p class="notice">PIN incorrecto.</p>';}
+ });
+ $("adminLockBtn").addEventListener("click",function(){adminOpen=false;$("adminPanel").hidden=true;$("adminLockCard").hidden=false;$("adminPinInput").value="";});
+ $("valAllBtn").addEventListener("click",function(){var all=getRecords();var n=0;all.forEach(function(r){if(!r.validated){r.validated=true;r.validatedBy="Administración";n++;}});saveRecords(all);afterAdminChange();toast(n+" registros validados");});
+ $("cfgSaveBtn").addEventListener("click",function(){var s={title:$("cfgTitleInput").value.trim()||DEFAULT_SITE.title,sub:$("cfgSubInput").value.trim()||DEFAULT_SITE.sub,hero:$("cfgHeroInput").value.trim()||DEFAULT_SITE.hero};localStorage.setItem(SITE_KEY,JSON.stringify(s));applySiteCfg();toast("Textos actualizados");});
+ $("cfgResetBtn").addEventListener("click",function(){localStorage.removeItem(SITE_KEY);$("cfgTitleInput").value=DEFAULT_SITE.title;$("cfgSubInput").value=DEFAULT_SITE.sub;$("cfgHeroInput").value=DEFAULT_SITE.hero;applySiteCfg();toast("Textos originales");});
+ $("pinSaveBtn").addEventListener("click",function(){var v=$("newPinInput").value.trim();if(v.length<4){toast("El PIN debe tener 4 o más dígitos");return;}localStorage.setItem(ADMIN_PIN_KEY,v);$("newPinInput").value="";toast("PIN actualizado");});
+ $("reseedBtn").addEventListener("click",function(){if(confirm("Reemplazar TODOS los registros por los datos de ejemplo?")){saveRecords(seedRecords());afterAdminChange();toast("Datos de ejemplo restaurados");}});
 }
 
-/* ---------- wiring ---------- */
+/* ---------- wiring ---------- *//* ---------- wiring ---------- */
 $("addSpBtn").addEventListener("click",function(){addSpeciesRow(null,1);});
 $("gotoGuideLink").addEventListener("click",function(e){e.preventDefault();showTab("especies");});
 $("gpsBtn").addEventListener("click",function(){
@@ -818,7 +895,7 @@ $("wipeBtn").addEventListener("click",function(){
 /* init */
 $("obsFechaInput").value=todayStr();$("obsHoraInput").value=nowTime();
 $("spRowsCtn").innerHTML="";addSpeciesRow("cartacuba",2);addSpeciesRow("chillina",4);
-renderGuides();renderSpeciesGrid();renderHome();
+applySiteCfg();wireAdmin();renderSpeciesGrid();renderHome();renderAdmin();
 setFormPoint(ZAPATA_CENTER[0],ZAPATA_CENTER[1],null);
 })();
 </script>

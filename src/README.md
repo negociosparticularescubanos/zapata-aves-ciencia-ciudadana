@@ -14,7 +14,7 @@ conteo por especie y evidencia (fotos / video / notas de campo).
   - Leaflet 1.9.4 por CDN para los mapas (OpenStreetMap).
   - JS propio: almacenamiento en `localStorage` (offline-first),
     compresión de fotos en `<canvas>`, GPS con `navigator.geolocation`,
-    exportación CSV/JSON, panel científico y validación por guías.
+    exportación CSV/JSON, panel científico y panel de administración.
   - Sin emojis en la UI (SVG inline).
 
 ## Datos
@@ -22,7 +22,7 @@ conteo por especie y evidencia (fotos / video / notas de campo).
 - 23 especies endémicas presentes en Zapata (de las 27 de Cuba) definidas en
   `window.ZAPATA_SPECIES` dentro de `index.html`.
 - Clave de almacenamiento: `zapata_aves_v1` (array de registros).
-  Clave de guía seleccionado: `zapata_guia_asignado`.
+  Claves de admin: `zapata_admin_pin`, `zapata_site_cfg`.
 - 7 registros semilla realistas para demostrar mapa y estadísticas.
   Se generan solo si no hay datos guardados.
 
@@ -47,6 +47,22 @@ conteo por especie y evidencia (fotos / video / notas de campo).
    con cantidades, adjuntar foto, guardar.
 3. Ir a "Mapa" y comprobar el punto nuevo, filtros y popup.
 4. Ir a "Datos" y exportar CSV/JSON.
+
+## Administración
+
+- Pestaña Admin con PIN (inicial 1234, cambiable): valida o retira validación
+  por registro o en masa, edita observador/fecha/hora/sendero/hábitat/
+  acompañante/notas, borra, restaura datos de ejemplo y ve el espacio usado.
+- Personalización sin código: título, subtítulo y texto del héroe,
+  guardados en `zapata_site_cfg` y aplicados al abrir.
+- Sin sección de guías: el formulario pide "Acompañante o guía local"
+  como texto libre.
+
+## Fondo
+
+- Foto de bosque generada (`imageUrl` en el chat) como fondo fijo de toda
+  la página, con velo claro encima. Tarjetas, barra superior, fichas y pie
+  usan fondos translúcidos con desenfoque.
 
 ## Notas para futuras sesiones
 
